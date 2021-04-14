@@ -42,7 +42,7 @@ public class OrderServicesImpl implements OrderServices {
 
     @Override
     public void saveOrder(Order order) {
-        if (order.getDate() == null){
+        if (order.getDate() == null) {
             order.setDate(LocalDateTime.now());
         }
         orderRepository.save(order);

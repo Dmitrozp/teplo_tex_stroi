@@ -15,13 +15,13 @@ public class RESTControllerOrder {
     OrderServices services;
 
     @GetMapping("/order")
-    public List<Order> getAllOrder(){
+    public List<Order> getAllOrder() {
         List<Order> orders = services.getAllOrder();
         return orders;
     }
 
     @PostMapping("/order")
-    public Order addOrder(@RequestBody Order order){
+    public Order addOrder(@RequestBody Order order) {
         services.saveOrder(order);
         return order;
     }

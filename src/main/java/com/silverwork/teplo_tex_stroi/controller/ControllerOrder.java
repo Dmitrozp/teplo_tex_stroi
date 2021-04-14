@@ -23,29 +23,27 @@ public class ControllerOrder {
     UserServices userServices;
 
     @RequestMapping("/")
-    public String showAllOrdersWithHidePhoneNumber(Model model){
+    public String showAllOrdersWithHidePhoneNumber(Model model) {
 
         List<Order> orders = orderServices.getOrdersWithHidePhoneAndUserNull();
-        model.addAttribute("orders",orders);
+        model.addAttribute("orders", orders);
 
         return "home-page";
     }
 
     @RequestMapping("/order")
-    public String showAllOrders(Model model, Principal principal){
+    public String showAllOrders(Model model, Principal principal) {
         User user = userServices.getUserByLoginName(principal.getName());
-
         List<Order> orders = orderServices.getOrdersWithHidePhoneAndUserNull();
-        model.addAttribute("orders",orders);
+        model.addAttribute("orders", orders);
         model.addAttribute("user", user);
-
 
         return "all-orders";
     }
 
 
     @RequestMapping("/order/addUser")
-    public String addOrder(@RequestParam("orderId") int orderId, Principal principal){
+    public String addOrder(@RequestParam("orderId") int orderId, Principal principal) {
         String userLogin = principal.getName();
         Order order = orderServices.getOrderById(orderId);
         User user = userServices.getUserByLoginName(userLogin);
@@ -57,18 +55,18 @@ public class ControllerOrder {
     }
 
     @RequestMapping("/profile")
-    public String profileUser(Model model, Principal principal){
+    public String profileUser(Model model, Principal principal) {
         User user = userServices.getUserByLoginName(principal.getName());
         List<Order> orders = user.getOrders();
-        model.addAttribute("orders",orders);
+        model.addAttribute("orders", orders);
         model.addAttribute("user", user);
 
         return "profile-user";
     }
 
     @RequestMapping("/order/{id}")
-    public String showOrderById(@PathVariable long id, Model model){
-        List<Order> orders= new ArrayList<>();
+    public String showOrderById(@PathVariable long id, Model model) {
+        List<Order> orders = new ArrayList<>();
         orders.add(orderServices.getOrderById(id));
         model.addAttribute("allOrders", orders);
         return "all-orders";
