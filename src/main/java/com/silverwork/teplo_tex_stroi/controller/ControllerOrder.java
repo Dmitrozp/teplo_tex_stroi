@@ -41,7 +41,6 @@ public class ControllerOrder {
         return "all-orders";
     }
 
-
     @RequestMapping("/order/addUser")
     public String addOrder(@RequestParam("orderId") int orderId, Principal principal) {
         String userLogin = principal.getName();
@@ -71,5 +70,4 @@ public class ControllerOrder {
         model.addAttribute("allOrders", orders);
         return "all-orders";
     }
-
 }
