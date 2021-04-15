@@ -1,4 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>.
 <%@page contentType="text/html;charset=UTF-8" language="java"%>
 <html>
 <head>
@@ -14,7 +15,7 @@
             <font size="5" face="Courier New" >
                 <p align="right"> Привет: гость </p>
                 <form method="LINK" action="http://134.249.133.144:8080/order">
-                    <input type="submit" value="Зайти в систему">
+                    <input align="50%" type="submit" value="Зайти в систему">
                 </form>
             </font>
         </th>
@@ -36,13 +37,20 @@
             <th>Телефон</th>
             <th>Площадь утепления</th>
             <th>Примечание</th>
-            <th></th>
         </tr>
+
 
         <c:forEach var="orders" items="${orders}" >
 
             <tr col style="background-color:LightCyan" align="center">
-                <td>${orders.date}</td>
+                <td>
+                    <fmt:parseDate value="${orders.date}" pattern="yyyy-MM-dd'T'HH:mm:ss"
+                                   var="parsedDateTime" type="both" />
+
+                    <fmt:formatDate value="${parsedDateTime}" pattern="dd.MM.yyyy" />
+                    <br>
+                    <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm:ss" />
+                </td>
                 <td>${orders.customerName}</td>
                 <td>${orders.address}</td>
                 <td>${orders.countRooms}</td>

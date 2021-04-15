@@ -1,4 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@page contentType="text/html;charset=UTF-8" language="java"%>
 <!DOCTYPE html>
 <html>
@@ -13,7 +14,7 @@
                 <p align="right"> Привет:${user.name} ${user.lastName} </p>
                 <p align="right">     ${user.loginName}</p>
                 <form method="LINK" action="http://134.249.133.144:8080/profile">
-                    <input type="submit" value="Кабинет">
+                    <input type="submit" value="Кабинет"></form>
             </font>
         </th>
     </tr>
@@ -44,7 +45,14 @@
         </c:url>
 
         <tr col style="background-color:LightCyan" align="center">
-            <td>${orders.date}</td>
+            <td>
+                <fmt:parseDate value="${orders.date}" pattern="yyyy-MM-dd'T'HH:mm:ss"
+                               var="parsedDateTime" type="both" />
+
+                <fmt:formatDate value="${parsedDateTime}" pattern="dd.MM.yyyy" />
+                <br>
+                <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm:ss" />
+            </td>
             <td>${orders.customerName}</td>
             <td>${orders.address}</td>
             <td>${orders.countRooms}</td>

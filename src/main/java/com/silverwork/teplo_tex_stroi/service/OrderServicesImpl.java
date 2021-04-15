@@ -59,7 +59,6 @@ public class OrderServicesImpl implements OrderServices {
         return order;
     }
 
-
     private String hidingPhoneNumber(String phoneNumber) {
         final int firstSumbolOfPhoneNumber = 0;
         final int countHideNumber = 2;
@@ -69,4 +68,5 @@ public class OrderServicesImpl implements OrderServices {
         resultPhoneNumber = phoneNumberWithoutLastNumbers + hideSymbols;
         return resultPhoneNumber;
     }
+
 }
