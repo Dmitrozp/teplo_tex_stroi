@@ -2,18 +2,23 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Сохранение отчета о заявке</title>
+    <title>Отчета о заявке</title>
 </head>
 <body>
-
-<h1> Создать отчет о заявке</h1>
+<font size="5" face="Courier New" >
+Создать отчет о заявке
+</font>
 <br>
+<br>
+<h3>Опишите подробно : </h3>
 <form:form action="saveReport" modelAttribute="report">
     <form:hidden path="id"/>
     <form:hidden path="order.id"/>
-    Описание : <form:input path="description" size="100" maxlength="100"/>
+    <form:textarea path="description" style="width: 300px; height: 300px;" />
     <br>
-    <input type="submit" value="Сохранить">
+    <br>
+    <br>
+    <input type="submit" value="Сохранить" />
 </form:form>
 
 </body>

@@ -22,11 +22,7 @@ public class ReportServicesImpl implements ReportServices{
     }
 
     @Override
-    public Report findReportById(Long id) throws Exception {
-        Report report = null;
-        if(!reportRepository.findById(id).isPresent()){
-            throw new Exception("Отчет с Id = " + id + " не найден");
-        }
+    public Report findReportById(Long id) {
         return reportRepository.findById(id).get();
     }
 }

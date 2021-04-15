@@ -11,7 +11,7 @@
         </th>
         <th>
             <font size="5" face="Courier New" >
-                <p align="right"> Привет:${user.name} ${user.lastName} </p>
+                <p align="right"> ${user.name} ${user.lastName} </p>
                 <p align="right">Логин:     ${user.loginName}</p>
                 <p align="right">Баланс:    ${user.balance} грн</p>
                 <form method="LINK" action="http://134.249.133.144:8080/profile">

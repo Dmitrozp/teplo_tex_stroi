@@ -13,11 +13,11 @@
         </th>
         <th>
             <font size="5" face="Courier New" >
-                <p align="right"> Привет:${user.name} ${user.lastName} </p>
+                <p align="right"> ${user.name} ${user.lastName} </p>
                 <p align="right">Логин:     ${user.loginName}</p>
                 <p align="right">Баланс:    ${user.balance} грн</p>
                 <form method="LINK" action="http://134.249.133.144:8080/order">
-                    <input type="submit" value="Все заявки">
+                    <input type="submit" value="Взять заявку">
                 </form>
             </font>
         </th>
@@ -39,8 +39,7 @@
             <th>Город</th>
             <th>Телефон</th>
             <th>Площадь</th>
-            <th>Примечание</th>
-            <th></th>
+            <th width="100">Отчеты</th>
         </tr>
 
         <c:forEach var="orders" items="${orders}" >
@@ -92,7 +91,12 @@
             </tr>
         </c:forEach>
     </table>
-</font>>
+    <font size="4" face="Courier New" >
+        <c:if test="${countOrders < 1}">
+        <p>У Вас еще нет заявок! Что бы взять заявку, прейдите выше, по кнопке "Взять заявку"<p>
+        </c:if>
+    </font>
+</font>
 
 </body>
 </html>

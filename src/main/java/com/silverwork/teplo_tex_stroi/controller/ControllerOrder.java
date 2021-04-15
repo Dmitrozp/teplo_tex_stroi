@@ -3,6 +3,7 @@ package com.silverwork.teplo_tex_stroi.controller;
 import com.silverwork.teplo_tex_stroi.entity.Order;
 import com.silverwork.teplo_tex_stroi.entity.Report;
 import com.silverwork.teplo_tex_stroi.entity.User;
+import com.silverwork.teplo_tex_stroi.exception_handling.NoSuchOrderException;
 import com.silverwork.teplo_tex_stroi.service.OrderServices;
 import com.silverwork.teplo_tex_stroi.service.ReportServices;
 import com.silverwork.teplo_tex_stroi.service.UserServices;
@@ -73,7 +74,7 @@ public class ControllerOrder {
     }
 
     @RequestMapping("/order/saveReport")
-    public String saveReport(@ModelAttribute("report") Report report, Principal principal) throws Exception {
+    public String saveReport(@ModelAttribute("report") Report report, Principal principal) {
         Report reportResult = reportServices.findReportById(report.getId());
         reportResult.setDescription(report.getDescription());
         reportServices.saveReport(reportResult);
@@ -85,8 +86,11 @@ public class ControllerOrder {
     public String profileUser(Model model, Principal principal) {
         User user = userServices.getUserByLoginName(principal.getName());
         List<Order> orders = user.getOrders();
+        int countOrders = orders.size();
+
         model.addAttribute("orders", orders);
         model.addAttribute("user", user);
+        model.addAttribute("countOrders", countOrders);
 
         return "profile-user";
     }
