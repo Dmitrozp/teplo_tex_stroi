@@ -28,11 +28,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers("/profile/**").authenticated()
                 .antMatchers("/order/addUser").authenticated()
                 .antMatchers("/admin").hasAnyRole("ADMIN", "MANAGER")
-                .antMatchers("/api/**").hasIpAddress("192.168.0.110")
+//                .antMatchers("/api/**").anonymous()
                 .and()
                 .formLogin()
                 .and()
-                .logout().logoutSuccessUrl("/");
+                .logout().logoutSuccessUrl("/")
+                .and().csrf().disable();
     }
 
 //    @Bean

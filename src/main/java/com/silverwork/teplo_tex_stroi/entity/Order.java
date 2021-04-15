@@ -33,7 +33,7 @@ public class Order {
     @Column(name = "date_insert")
     private LocalDateTime date;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Nullable
     @JoinColumn(name = "login_name")
     private User user;
