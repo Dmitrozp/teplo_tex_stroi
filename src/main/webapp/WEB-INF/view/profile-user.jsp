@@ -14,7 +14,8 @@
         <th>
             <font size="5" face="Courier New" >
                 <p align="right"> Привет:${user.name} ${user.lastName} </p>
-                <p align="right">     ${user.loginName}</p>
+                <p align="right">Логин:     ${user.loginName}</p>
+                <p align="right">Баланс:    ${user.balance} грн</p>
                 <form method="LINK" action="http://134.249.133.144:8080/order">
                     <input type="submit" value="Все заявки">
                 </form>
@@ -37,11 +38,16 @@
             <th>Количество комнат</th>
             <th>Город</th>
             <th>Телефон</th>
-            <th>Площадь утепления</th>
+            <th>Площадь</th>
             <th>Примечание</th>
+            <th></th>
         </tr>
 
         <c:forEach var="orders" items="${orders}" >
+
+            <c:url var="createReport" value="/order/createReport" >
+                <c:param name="orderId" value="${orders.id}"/>
+            </c:url>
 
             <tr col style="background-color:LightCyan" align="center">
                 <td>
@@ -58,7 +64,31 @@
                 <td>${orders.city}</td>
                 <td>${orders.phoneNumber}</td>
                 <td>${orders.squareArea}</td>
-                <td>${orders.notes}</td>
+                <td align="left">
+                    <table>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    <c:forEach var="report" items="${orders.reports}">
+                        <tr>
+                            <td>
+                                <fmt:parseDate value="${report.date}" pattern="yyyy-MM-dd'T'HH:mm:ss"
+                                               var="parsedDateTime" type="both" />
+
+                                <fmt:formatDate value="${parsedDateTime}" pattern="dd.MM.yyyy" />
+                                <br>
+                                <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm" />
+                            </td>
+                <td>${report.description}</td>
+                        </tr>
+                </c:forEach>
+                    </table>
+                </td>
+                <td col style="background-color:white" align="center">
+                    <input type="button" value="Оставить отчет"
+                           onclick = "window.location.href = '${createReport}'"/>
+                </td>
             </tr>
         </c:forEach>
     </table>

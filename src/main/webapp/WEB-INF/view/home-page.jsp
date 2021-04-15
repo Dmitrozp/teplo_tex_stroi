@@ -15,7 +15,7 @@
             <font size="5" face="Courier New" >
                 <p align="right"> Привет: гость </p>
                 <form method="LINK" action="http://134.249.133.144:8080/order">
-                    <input align="50%" type="submit" value="Зайти в систему">
+                    <input align="50%" type="submit" value="Войти">
                 </form>
             </font>
         </th>
@@ -38,7 +38,6 @@
             <th>Площадь утепления</th>
             <th>Примечание</th>
         </tr>
-
 
         <c:forEach var="orders" items="${orders}" >
 

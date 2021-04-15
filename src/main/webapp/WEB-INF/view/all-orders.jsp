@@ -12,9 +12,10 @@
         <th>
             <font size="5" face="Courier New" >
                 <p align="right"> Привет:${user.name} ${user.lastName} </p>
-                <p align="right">     ${user.loginName}</p>
+                <p align="right">Логин:     ${user.loginName}</p>
+                <p align="right">Баланс:    ${user.balance} грн</p>
                 <form method="LINK" action="http://134.249.133.144:8080/profile">
-                    <input type="submit" value="Кабинет"></form>
+                    <input type="submit" value="Войти в личный кабинет"></form>
             </font>
         </th>
     </tr>
@@ -35,7 +36,7 @@
         <th>Телефон</th>
         <th>Площадь утепления</th>
         <th>Примечание</th>
-        <th></th>
+        <th col style="background-color:white" align="center"></th>
     </tr>
 
     <c:forEach var="orders" items="${orders}" >
@@ -60,7 +61,7 @@
             <td>${orders.phoneNumber}</td>
             <td>${orders.squareArea}</td>
             <td>${orders.notes}</td>
-            <td>
+            <td col style="background-color:white" align="center">
                 <input type="button" value="Взять заявку"
                 onclick = "window.location.href = '${addOrder}'"/>
             </td>

@@ -1,12 +1,15 @@
 package com.silverwork.teplo_tex_stroi.controller;
 
 import com.silverwork.teplo_tex_stroi.entity.Order;
+import com.silverwork.teplo_tex_stroi.entity.Report;
 import com.silverwork.teplo_tex_stroi.entity.User;
 import com.silverwork.teplo_tex_stroi.service.OrderServices;
+import com.silverwork.teplo_tex_stroi.service.ReportServices;
 import com.silverwork.teplo_tex_stroi.service.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +24,8 @@ public class ControllerOrder {
     OrderServices orderServices;
     @Autowired
     UserServices userServices;
+    @Autowired
+    ReportServices reportServices;
 
     @RequestMapping("/")
     public String showAllOrdersWithHidePhoneNumber(Model model) {
@@ -51,6 +56,29 @@ public class ControllerOrder {
         orderServices.saveOrder(order);
 
         return "redirect:http://134.249.133.144:8080/order";
+    }
+
+    @RequestMapping("/order/createReport")
+    public String createReport(@RequestParam("orderId") int orderId, Principal principal, Model model) {
+        Order order = orderServices.getOrderById(orderId);
+        User user = userServices.getUserByLoginName(principal.getName());
+        Report report = new Report();
+        report.setOrder(order);
+        report.setUser(user);
+        reportServices.saveReport(report);
+
+        model.addAttribute("report", report);
+
+        return "create-report";
+    }
+
+    @RequestMapping("/order/saveReport")
+    public String saveReport(@ModelAttribute("report") Report report, Principal principal) throws Exception {
+        Report reportResult = reportServices.findReportById(report.getId());
+        reportResult.setDescription(report.getDescription());
+        reportServices.saveReport(reportResult);
+
+        return "redirect:/profile";
     }
 
     @RequestMapping("/profile")

@@ -56,7 +56,7 @@ public class Order {
         this.phoneNumber = phoneNumber;
     }
 
-    public void addReportToOrder(Report report){
+    public void addReport(Report report){
         if (reports == null){
             this.reports = new ArrayList<>();
             reports.add(report);

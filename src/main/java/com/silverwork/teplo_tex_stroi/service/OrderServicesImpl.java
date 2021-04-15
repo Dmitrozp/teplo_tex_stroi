@@ -1,5 +1,6 @@
 package com.silverwork.teplo_tex_stroi.service;
 
+import com.silverwork.teplo_tex_stroi.entity.Report;
 import com.silverwork.teplo_tex_stroi.entity.User;
 import com.silverwork.teplo_tex_stroi.repository.OrderRepository;
 import com.silverwork.teplo_tex_stroi.entity.Order;
@@ -38,6 +39,12 @@ public class OrderServicesImpl implements OrderServices {
     @Override
     public List<Order> getOrdersByUser(User user) {
         return orderRepository.findOrderByUser(user);
+    }
+
+    @Override
+    public Report addReport(Report report) {
+
+        return null;
     }
 
     @Override
