@@ -9,13 +9,15 @@
         <th align="left">
             <img width=100% src="${pageContext.request.contextPath}/img/logo1.jpg"/>
         </th>
-        <th>
-            <font size="5" face="Courier New" >
+        <th width="50%">
+            <font size="4" face="Courier New" >
                 <p align="right"> ${user.name} ${user.lastName} </p>
-                <p align="right">Логин:     ${user.loginName}</p>
-                <p align="right">Баланс:    ${user.balance} грн</p>
-                <form method="LINK" action="http://134.249.133.144:8080/profile">
-                    <input type="submit" value="Войти в личный кабинет"></form>
+                <p align="right">Город: ${user.city} </p>
+                <p align="right">Логин: ${user.loginName}</p>
+                <p align="right">Баланс: ${user.balance} грн</p>
+                <form  align="right" method="LINK" action="http://134.249.133.144:8080/profile">
+                    <input type="submit" value="Войти в личный кабинет" style="width: 250px; height: 30px;">
+                </form>
             </font>
         </th>
     </tr>
@@ -41,7 +43,7 @@
 
     <c:forEach var="orders" items="${orders}" >
 
-        <c:url var="addOrder" value="/order/addUser" >
+        <c:url var="addOrder" value="/order/addOrder" >
             <c:param name="orderId" value="${orders.id}"/>
         </c:url>
 
@@ -54,13 +56,13 @@
                 <br>
                 <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm:ss" />
             </td>
-            <td>${orders.customerName}</td>
-            <td>${orders.address}</td>
-            <td>${orders.countRooms}</td>
-            <td>${orders.city}</td>
-            <td>${orders.phoneNumber}</td>
-            <td>${orders.squareArea}</td>
-            <td>${orders.notes}</td>
+            <td>${orders.orderDetails.customerName}</td>
+            <td>${orders.orderDetails.address}</td>
+            <td>${orders.orderDetails.countRooms}</td>
+            <td>${orders.orderDetails.city}</td>
+            <td>${orders.orderDetails.phoneNumber}</td>
+            <td>${orders.orderDetails.squareArea}</td>
+            <td>${orders.orderDetails.notes}</td>
             <td col style="background-color:white" align="center">
                 <input type="button" value="Взять заявку"
                 onclick = "window.location.href = '${addOrder}'"/>

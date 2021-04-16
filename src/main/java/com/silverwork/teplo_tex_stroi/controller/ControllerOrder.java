@@ -3,7 +3,7 @@ package com.silverwork.teplo_tex_stroi.controller;
 import com.silverwork.teplo_tex_stroi.entity.Order;
 import com.silverwork.teplo_tex_stroi.entity.Report;
 import com.silverwork.teplo_tex_stroi.entity.User;
-import com.silverwork.teplo_tex_stroi.exception_handling.NoSuchOrderException;
+import com.silverwork.teplo_tex_stroi.enums.OrderStatus;
 import com.silverwork.teplo_tex_stroi.service.OrderServices;
 import com.silverwork.teplo_tex_stroi.service.ReportServices;
 import com.silverwork.teplo_tex_stroi.service.UserServices;
@@ -30,33 +30,29 @@ public class ControllerOrder {
 
     @RequestMapping("/")
     public String showAllOrdersWithHidePhoneNumber(Model model) {
-
-        List<Order> orders = orderServices.getOrdersWithHidePhoneAndUserNull();
+        List<Order> orders = orderServices.getOrdersWithHidePhoneAndStatusOrder(OrderStatus.NEW_ORDER_VERIFIED.name());
         model.addAttribute("orders", orders);
-
+        System.out.println(orders);
         return "home-page";
     }
 
     @RequestMapping("/order")
     public String showAllOrders(Model model, Principal principal) {
         User user = userServices.getUserByLoginName(principal.getName());
-        List<Order> orders = orderServices.getOrdersWithHidePhoneAndUserNull();
+        List<Order> orders = orderServices.getOrdersWithHidePhoneAndStatusOrder(OrderStatus.NEW_ORDER_VERIFIED.name());
         model.addAttribute("orders", orders);
         model.addAttribute("user", user);
 
         return "all-orders";
     }
 
-    @RequestMapping("/order/addUser")
+    @RequestMapping("/order/addOrder")
     public String addOrder(@RequestParam("orderId") int orderId, Principal principal) {
         String userLogin = principal.getName();
         Order order = orderServices.getOrderById(orderId);
         User user = userServices.getUserByLoginName(userLogin);
-
-        order.setUser(user);
-        orderServices.saveOrder(order);
-
-        return "redirect:http://134.249.133.144:8080/order";
+        orderServices.addOrderToUser(order, user);
+        return "redirect:/order";
     }
 
     @RequestMapping("/order/createReport")
@@ -65,7 +61,7 @@ public class ControllerOrder {
         User user = userServices.getUserByLoginName(principal.getName());
         Report report = new Report();
         report.setOrder(order);
-        report.setUser(user);
+        report.setUserExecutor(user);
         reportServices.saveReport(report);
 
         model.addAttribute("report", report);
@@ -74,7 +70,7 @@ public class ControllerOrder {
     }
 
     @RequestMapping("/order/saveReport")
-    public String saveReport(@ModelAttribute("report") Report report, Principal principal) {
+    public java.lang.String saveReport(@ModelAttribute("report") Report report, Principal principal) {
         Report reportResult = reportServices.findReportById(report.getId());
         reportResult.setDescription(report.getDescription());
         reportServices.saveReport(reportResult);
@@ -83,7 +79,7 @@ public class ControllerOrder {
     }
 
     @RequestMapping("/profile")
-    public String profileUser(Model model, Principal principal) {
+    public java.lang.String profileUser(Model model, Principal principal) {
         User user = userServices.getUserByLoginName(principal.getName());
         List<Order> orders = user.getOrders();
         int countOrders = orders.size();
@@ -96,7 +92,7 @@ public class ControllerOrder {
     }
 
     @RequestMapping("/order/{id}")
-    public String showOrderById(@PathVariable long id, Model model) {
+    public java.lang.String showOrderById(@PathVariable long id, Model model) {
         List<Order> orders = new ArrayList<>();
         orders.add(orderServices.getOrderById(id));
         model.addAttribute("allOrders", orders);

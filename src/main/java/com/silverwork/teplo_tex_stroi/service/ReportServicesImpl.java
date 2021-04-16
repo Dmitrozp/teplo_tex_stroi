@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 @Service
-public class ReportServicesImpl implements ReportServices{
+public class ReportServicesImpl implements ReportServices {
     @Autowired
     ReportRepository reportRepository;
 

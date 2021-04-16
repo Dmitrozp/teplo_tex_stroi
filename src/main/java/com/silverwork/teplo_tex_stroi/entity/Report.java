@@ -13,14 +13,14 @@ public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name ="date_insert")
+    @Column(name = "date_insert")
     private LocalDateTime date;
     @Column(name = "description")
     private String description;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "login_name")
-    private User user;
+    private User userExecutor;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")

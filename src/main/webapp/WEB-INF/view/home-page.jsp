@@ -50,13 +50,13 @@
                     <br>
                     <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm:ss" />
                 </td>
-                <td>${orders.customerName}</td>
-                <td>${orders.address}</td>
-                <td>${orders.countRooms}</td>
-                <td>${orders.city}</td>
-                <td>${orders.phoneNumber}</td>
-                <td>${orders.squareArea}</td>
-                <td>${orders.notes}</td>
+                <td>${orders.orderDetails.customerName}</td>
+                <td>${orders.orderDetails.address}</td>
+                <td>${orders.orderDetails.countRooms}</td>
+                <td>${orders.orderDetails.city}</td>
+                <td>${orders.orderDetails.phoneNumber}</td>
+                <td>${orders.orderDetails.squareArea}</td>
+                <td>${orders.orderDetails.notes}</td>
             </tr>
         </c:forEach>
     </table>

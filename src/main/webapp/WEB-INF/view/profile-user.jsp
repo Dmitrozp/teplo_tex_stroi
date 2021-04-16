@@ -11,13 +11,14 @@
         <th align="left">
             <img width=100% src="${pageContext.request.contextPath}/img/logo1.jpg"/>
         </th>
-        <th>
-            <font size="5" face="Courier New" >
+        <th width="50%">
+            <font size="4" face="Courier New" >
                 <p align="right"> ${user.name} ${user.lastName} </p>
-                <p align="right">Логин:     ${user.loginName}</p>
-                <p align="right">Баланс:    ${user.balance} грн</p>
-                <form method="LINK" action="http://134.249.133.144:8080/order">
-                    <input type="submit" value="Взять заявку">
+                <p align="right">Город: ${user.city} </p>
+                <p align="right">Логин: ${user.loginName}</p>
+                <p align="right">Баланс: ${user.balance} грн</p>
+                <form method="LINK" align="right" action="http://134.249.133.144:8080/order">
+                    <input  type="submit" value="Взять заявку" style="width: 150px; height: 30px;">
                 </form>
             </font>
         </th>
@@ -57,12 +58,12 @@
                     <br>
                     <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm:ss" />
                 </td>
-                <td>${orders.customerName}</td>
-                <td>${orders.address}</td>
-                <td>${orders.countRooms}</td>
-                <td>${orders.city}</td>
-                <td>${orders.phoneNumber}</td>
-                <td>${orders.squareArea}</td>
+                <td>${orders.orderDetails.customerName}</td>
+                <td>${orders.orderDetails.address}</td>
+                <td>${orders.orderDetails.countRooms}</td>
+                <td>${orders.orderDetails.city}</td>
+                <td>${orders.orderDetails.phoneNumber}</td>
+                <td>${orders.orderDetails.squareArea}</td>
                 <td align="left">
                     <table>
                         <tr>
@@ -93,7 +94,7 @@
     </table>
     <font size="4" face="Courier New" >
         <c:if test="${countOrders < 1}">
-        <p>У Вас еще нет заявок! Что бы взять заявку, прейдите выше, по кнопке "Взять заявку"<p>
+        <p>У Вас еще нет заявок! Что бы взять заявку, перейдите по кнопке "Взять заявку"<p>
         </c:if>
     </font>
 </font>

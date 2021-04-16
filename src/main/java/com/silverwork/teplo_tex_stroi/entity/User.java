@@ -3,6 +3,7 @@ package com.silverwork.teplo_tex_stroi.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,9 +15,6 @@ public class User {
     private String loginName;
     @Column(name = "password")
     private String password;
-    @Transient
-    private String role;
-
     @Column(name = "name")
     private String name;
     @Column(name = "last_name")
@@ -29,11 +27,11 @@ public class User {
     private String phoneNumber;
 
     @OneToMany(cascade = CascadeType.ALL,
-            mappedBy = "user")
+            mappedBy = "userExecutor")
     private List<Order> orders;
 
     @OneToMany(cascade = CascadeType.ALL,
-            mappedBy = "user")
+            mappedBy = "userExecutor")
     private List<Report> reports;
 
     @Column(name = "max_orders")
@@ -43,7 +41,15 @@ public class User {
 
     @ManyToMany
     @JoinTable(name = "users_roles",
-    joinColumns = @JoinColumn(name = "login_name"),
-    inverseJoinColumns = @JoinColumn(name = "role_id"))
+            joinColumns = @JoinColumn(name = "login_name"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles;
+
+    public void addOrder(Order order) {
+        if (this.orders == null) {
+            this.orders = new ArrayList<>();
+            this.orders.add(order);
+        }
+        this.orders.add(order);
+    }
 }

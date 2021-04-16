@@ -1,14 +1,14 @@
 package com.silverwork.teplo_tex_stroi.entity;
 
-import com.sun.istack.Nullable;
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
+@Component
 @Data
 @Entity
 @Table(name = "orders")
@@ -16,27 +16,20 @@ public class Order {
     @Id()
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "customer_name")
-    private String customerName;
-    @Column(name = "address")
-    private String address;
-    @Column(name = "count_rooms")
-    private String countRooms;
-    @Column(name = "square_area")
-    private Integer squareArea;
-    @Column(name = "notes")
-    private String notes;
-    @Column(name = "city")
-    private String city;
-    @Column(name = "phone_number")
-    private String phoneNumber;
     @Column(name = "date_insert")
     private LocalDateTime date;
+    @Column(name = "user_creator")
+    private String userCreator;
+    @Column(name = "order_status")
+    private String status;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_order_details")
+    private OrderDetails orderDetails;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Nullable
-    @JoinColumn(name = "login_name")
-    private User user;
+    @JoinColumn(name = "user_executor")
+    private User userExecutor;
 
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
@@ -46,18 +39,15 @@ public class Order {
     public Order() {
     }
 
-    public Order(String customerName, String address, String countRooms, int squareArea, String notes, String city, String phoneNumber) {
-        this.customerName = customerName;
-        this.address = address;
-        this.countRooms = countRooms;
-        this.squareArea = squareArea;
-        this.notes = notes;
-        this.city = city;
-        this.phoneNumber = phoneNumber;
+    public static Order createOrderWithDateCreated(OrderDetails orderDetails) {
+        Order order = new Order();
+        order.setOrderDetails(orderDetails);
+        order.setDate(LocalDateTime.now());
+        return order;
     }
 
-    public void addReport(Report report){
-        if (reports == null){
+    public void addReport(Report report) {
+        if (reports == null) {
             this.reports = new ArrayList<>();
             reports.add(report);
         }
@@ -65,3 +55,5 @@ public class Order {
         report.setOrder(this);
     }
 }
+
+

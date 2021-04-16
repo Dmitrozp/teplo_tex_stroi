@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class OrderExceptionHandler {
 
     @ExceptionHandler
-    public ResponseEntity<OrderIncorrectDate> handleException(NoSuchOrderException exception){
+    public ResponseEntity<OrderIncorrectDate> handleException(NoSuchOrderDetailsException exception) {
         OrderIncorrectDate orderIncorrectDate = new OrderIncorrectDate();
         orderIncorrectDate.setMessage(exception.getMessage());
 
