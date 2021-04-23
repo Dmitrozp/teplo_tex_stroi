@@ -32,7 +32,6 @@ public class ControllerOrder {
     public String showAllOrdersWithHidePhoneNumber(Model model) {
         List<Order> orders = orderServices.getOrdersWithHidePhoneAndStatusOrder(OrderStatus.NEW_ORDER_VERIFIED.name());
         model.addAttribute("orders", orders);
-        System.out.println(orders);
         return "home-page";
     }
 
@@ -45,8 +44,6 @@ public class ControllerOrder {
 
         return "all-orders";
     }
-
-
 
     @RequestMapping("/order/addOrder")
     public String addOrder(@RequestParam("orderId") int orderId, Principal principal) {

@@ -17,9 +17,6 @@
                 <p align="right">Город: ${user.city} </p>
                 <p align="right">Логин: ${user.loginName}</p>
                 <p align="right">Баланс: ${user.balance} грн</p>
-                <form method="LINK" align="right" action="http://134.249.133.144:8080/order">
-                    <input  type="submit" value="Взять заявку" style="width: 150px; height: 30px;">
-                </form>
             </font>
         </th>
     </tr>
