@@ -30,4 +30,6 @@ public interface OrderServices {
 
     List<Order> getOrdersForManagerByStatusAndManagerLoginName(String orderStatus, User user);
 
+    void saveCompletedOrder(Order orderWithChanges, User user);
+
 }

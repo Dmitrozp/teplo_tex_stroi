@@ -4,6 +4,7 @@ import com.silver_ads.teplo_tex_stroi.entity.OrderDetails;
 import com.silver_ads.teplo_tex_stroi.entity.Report;
 import com.silver_ads.teplo_tex_stroi.entity.User;
 import com.silver_ads.teplo_tex_stroi.enums.OrderStatus;
+import com.silver_ads.teplo_tex_stroi.enums.PaymentStatus;
 import com.silver_ads.teplo_tex_stroi.repository.OrderRepository;
 import com.silver_ads.teplo_tex_stroi.entity.Order;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class OrderServicesImpl implements OrderServices {
 
     @Override
     public List<Order> getOrdersForManagerByStatusAndManagerLoginName(String orderStatus, User user) {
-        List<Order> orders = orderRepository.findOrderByStatusAndUserExecutor(orderStatus, user);
+        List<Order> orders = orderRepository.findOrderByStatusOrderAndUserExecutor(orderStatus, user);
         return orders;
     }
 
@@ -44,8 +45,28 @@ public class OrderServicesImpl implements OrderServices {
         return orders;
     }
 
+
+    @Override
+    public void saveCompletedOrder(Order orderWithChanges, User user){
+        Order order = getOrderById(orderWithChanges.getId());
+        order.setSquareArea(orderWithChanges.getSquareArea());
+        order.setSumOfPaymentCustomer(orderWithChanges.getSumOfPaymentCustomer());
+        order.setStatusPayment(PaymentStatus.PROCESSING.name());
+        Report report = new Report();
+        report.setOrder(order);
+        report.setDate(LocalDateTime.now());
+        report.setDescription("ВЫПОЛНЕНA! исполнителем логин " + user.getLoginName()
+                + " Имя: " + user.getName() + " Заявка ID: " + order.getId()
+                + " Площадь утепления: " + order.getSquareArea()
+                + " Сумма оплаты клиентом: " + order.getSumOfPaymentCustomer());
+        report.setUserExecutor(user);
+        order.addReport(report);
+        orderRepository.save(order);
+    }
+
+    @Override
     public List<Order> getOrdersWithHidePhoneAndStatusOrder(String orderStatus) {
-        List<Order> orders = orderRepository.findOrdersByStatus(orderStatus);
+        List<Order> orders = orderRepository.findOrdersByStatusOrder(orderStatus);
         orders.stream().map(order -> {
                     order.getOrderDetails().setPhoneNumber(hidingPhoneNumber(order.getOrderDetails().getPhoneNumber()));
                     return order;
@@ -84,12 +105,11 @@ public class OrderServicesImpl implements OrderServices {
         return order;
     }
 
-    @Transactional
     @Override
     public Order addOrderToUser(Order order, User user) {
-        if (order.getStatus().equals(OrderStatus.NEW_ORDER_VERIFIED.name())) {
+        if (order.getStatusOrder().equals(OrderStatus.NEW_ORDER_VERIFIED.name())) {
             order.setUserExecutor(user);
-            order.setStatus(OrderStatus.IN_WORK.name());
+            order.setStatusOrder(OrderStatus.IN_WORK.name());
             orderRepository.save(order);
         }
         return order;
@@ -102,7 +122,8 @@ public class OrderServicesImpl implements OrderServices {
         Order order = new Order();
         order.setUserCreator("admin"); //TODO создатель заявки, заявки приходит с сайта
         order.setDate(LocalDateTime.now());
-        order.setStatus(OrderStatus.NEW_ORDER_NOT_VERIFIED.name());
+        order.setStatusOrder(OrderStatus.NEW_ORDER_NOT_VERIFIED.name());
+        order.setStatusPayment(PaymentStatus.UNKNOWN.name());
         order.setOrderDetails(orderDetails);
         orderRepository.save(order);
         return order;

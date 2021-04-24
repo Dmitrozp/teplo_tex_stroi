@@ -12,7 +12,7 @@ public class ScheduledTasks {
     @Autowired
     FacebookServices facebookServices;
 
-   @Scheduled(cron = "0 0/20 * * * *")
+   @Scheduled(cron = "0 59 * * * *")
    public void getAndSaveFBStatistics() throws APIException {
         APINodeList<AdsInsights> adsInsights = facebookServices.getStatisticsAdsFromFacebook();
         facebookServices.saveStatisticsFromFB(adsInsights);

@@ -48,6 +48,12 @@
             <c:url var="createReport" value="/order/createReport" >
                 <c:param name="orderId" value="${orders.id}"/>
             </c:url>
+            <c:url var="completedOrder" value="/order/createCompletedOrder" >
+                <c:param name="orderId" value="${orders.id}"/>
+            </c:url>
+            <c:url var="canceledOrder" value="/order/createCanceledOrder" >
+                <c:param name="orderId" value="${orders.id}"/>
+            </c:url>
 
             <tr col style="background-color:LightCyan" align="center">
                 <td>
@@ -86,8 +92,24 @@
                     </table>
                 </td>
                 <td col style="background-color:white" align="center">
-                    <input type="button" value="Оставить отчет"
-                           onclick = "window.location.href = '${createReport}'"/>
+                    <table>
+                        <tr>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="button" value="<< Оставить отчет >>" style="width:200px"
+                                       onclick = "window.location.href = '${createReport}'"/>
+                            <br>
+                                <br>
+                                <input type="button" value="<< Выполнить >> " style="width:200px"
+                                       onclick = "window.location.href = '${completedOrder}'"/>
+                            <br><br>
+                                <input type="button" value="<< Отменить >>" style="width:200px"
+                                       onclick = "window.location.href = '${canceledOrder}'"/>
+                            </td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
         </c:forEach>

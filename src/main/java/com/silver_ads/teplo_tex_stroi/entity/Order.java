@@ -21,7 +21,16 @@ public class Order {
     @Column(name = "user_creator")
     private String userCreator;
     @Column(name = "order_status")
-    private String status;
+    private String statusOrder;
+
+    @Column(name = "square_area")
+    private Integer squareArea;
+    @Column(name = "sum_payment_customer")
+    private Integer sumOfPaymentCustomer;
+    @Column(name = "sum_payment")
+    private Integer sumPayment;
+    @Column(name = "payment_status")
+    private String statusPayment;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_order_details")

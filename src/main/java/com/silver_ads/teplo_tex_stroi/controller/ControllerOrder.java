@@ -4,18 +4,17 @@ import com.silver_ads.teplo_tex_stroi.entity.Order;
 import com.silver_ads.teplo_tex_stroi.entity.Report;
 import com.silver_ads.teplo_tex_stroi.entity.User;
 import com.silver_ads.teplo_tex_stroi.enums.OrderStatus;
+import com.silver_ads.teplo_tex_stroi.enums.PaymentStatus;
 import com.silver_ads.teplo_tex_stroi.service.OrderServices;
 import com.silver_ads.teplo_tex_stroi.service.ReportServices;
 import com.silver_ads.teplo_tex_stroi.service.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +68,7 @@ public class ControllerOrder {
     @RequestMapping("/manager/sendOrderInWork")
     public String sendOrderInWork(@RequestParam("orderId") int orderId, Principal principal, Model model) {
         Order order = orderServices.getOrderById(orderId);
-        order.setStatus(OrderStatus.NEW_ORDER_VERIFIED.name());
+        order.setStatusOrder(OrderStatus.NEW_ORDER_VERIFIED.name());
         orderServices.saveOrder(order);
         User user = userServices.getUserByLoginName(principal.getName());
 
@@ -95,6 +94,55 @@ public class ControllerOrder {
         Report reportResult = reportServices.findReportById(report.getId());
         reportResult.setDescription(report.getDescription());
         reportServices.saveReport(reportResult);
+
+        return "redirect:/profile";
+    }
+
+    @RequestMapping("/order/createCanceledOrder")
+    public String createCanceledOrder(@RequestParam("orderId") int orderId, Principal principal, Model model) {
+        Order order = orderServices.getOrderById(orderId);
+        User user = userServices.getUserByLoginName(principal.getName());
+        Report report = new Report();
+        report.setUserExecutor(user);
+        report.setOrder(order);
+
+        model.addAttribute("order", order);
+        model.addAttribute("user", user);
+        model.addAttribute("report", report);
+
+        return "canceled-order";
+    }
+
+    @RequestMapping("/order/saveCanceledOrder")
+    public String saveCanceledOrder(@ModelAttribute("report") Report report, Principal principal) {
+        Order order = orderServices.getOrderById(report.getOrder().getId());
+        User user = userServices.getUserByLoginName(principal.getName());
+        report.setDescription("ОТМЕНА! исполнителем логин " + user.getLoginName()
+                + " Имя: " + user.getName() + " Заявка ID: " + order.getId()
+                + " Причина отмены : " + report.getDescription());
+        report.setDate(LocalDateTime.now());
+        order.addReport(report);
+        orderServices.saveOrder(order);
+
+        return "redirect:/profile";
+    }
+
+
+    @RequestMapping("/order/createCompletedOrder")
+    public String createCompletedOrder(@RequestParam("orderId") int orderId, Principal principal, Model model) {
+        Order order = orderServices.getOrderById(orderId);
+        User user = userServices.getUserByLoginName(principal.getName());
+
+        model.addAttribute("order", order);
+        model.addAttribute("user", user);
+
+        return "completed-order";
+    }
+
+    @RequestMapping("/order/saveCompletedOrder")
+    public String saveCompletedOrder(@ModelAttribute("order") Order orderWithChanges, Principal principal) {
+        User user = userServices.getUserByLoginName(principal.getName());
+        orderServices.saveCompletedOrder(orderWithChanges, user);
 
         return "redirect:/profile";
     }
