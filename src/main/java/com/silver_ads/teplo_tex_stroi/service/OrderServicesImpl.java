@@ -68,8 +68,8 @@ public class OrderServicesImpl implements OrderServices {
     public List<Order> getOrdersWithHidePhoneAndStatusOrder(String orderStatus) {
         List<Order> orders = orderRepository.findOrdersByStatusOrder(orderStatus);
         orders.stream().map(order -> {
-                    order.getOrderDetails().setPhoneNumber(hidingPhoneNumber(order.getOrderDetails().getPhoneNumber()));
-                    return order;
+                        order.getOrderDetails().setPhoneNumber(hidingPhoneNumber(order.getOrderDetails().getPhoneNumber()));
+                        return order;
                 }
         ).collect(Collectors.toList());
         return orders;
@@ -133,9 +133,12 @@ public class OrderServicesImpl implements OrderServices {
         final int firstSumbolOfPhoneNumber = 0;
         final int countHideNumber = 2;
         final String hideSymbols = "***";
-        String resultPhoneNumber;
-        String phoneNumberWithoutLastNumbers = phoneNumber.substring(firstSumbolOfPhoneNumber, phoneNumber.length() - countHideNumber);
-        resultPhoneNumber = phoneNumberWithoutLastNumbers + hideSymbols;
+        String resultPhoneNumber = phoneNumber;
+
+        if(phoneNumber.length() >= 3) {
+            String phoneNumberWithoutLastNumbers = phoneNumber.substring(firstSumbolOfPhoneNumber, phoneNumber.length() - countHideNumber);
+            resultPhoneNumber = phoneNumberWithoutLastNumbers + hideSymbols;
+        }
         return resultPhoneNumber;
     }
 

@@ -24,7 +24,7 @@
 <h3>Причина отмены заявки: </h3>
 <form:form action="saveCanceledOrder" modelAttribute="report">
     <form:hidden path="order.id"/>
-    <form:textarea path="description" style="width: 300px; height: 300px;" />
+    <form:textarea path="description" cols="50" rows="5" />
     <br>
     <br>
     <br>

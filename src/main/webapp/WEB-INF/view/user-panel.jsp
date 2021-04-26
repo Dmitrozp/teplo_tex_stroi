@@ -17,8 +17,8 @@
                 <p align="right">Город: ${user.city} </p>
                 <p align="right">Логин: ${user.loginName}</p>
                 <p align="right">Баланс: ${user.balance} грн</p>
-                <form method="LINK" align="right" action="http://134.249.133.144:8080/order">
-                    <input  type="submit" value="Взять заявку" style="width: 150px; height: 30px;">
+                <form method="LINK" align="right" action="/order">
+                    <input  type="submit" value="<<  Взять заявку  >>" style="width: 150px; height: 30px;">
                 </form>
             </font>
         </th>
@@ -62,7 +62,7 @@
 
                     <fmt:formatDate value="${parsedDateTime}" pattern="dd.MM.yyyy" />
                     <br>
-                    <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm:ss" />
+                    <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm" />
                 </td>
                 <td>${orders.orderDetails.customerName}</td>
                 <td>${orders.orderDetails.address}</td>
@@ -98,15 +98,17 @@
                         </tr>
                         <tr>
                             <td>
-                                <input type="button" value="<< Оставить отчет >>" style="width:200px"
-                                       onclick = "window.location.href = '${createReport}'"/>
-                            <br>
                                 <br>
-                                <input type="button" value="<< Выполнить >> " style="width:200px"
+                                <input type="button" value="<< Оставить отчет >>" style="width:150px"
+                                       onclick = "window.location.href = '${createReport}'"/>
+                                <p></p>
+                                <input type="button" value="<<     Выполнить    >> " style="width:150px"
                                        onclick = "window.location.href = '${completedOrder}'"/>
-                            <br><br>
-                                <input type="button" value="<< Отменить >>" style="width:200px"
+                                <p></p>
+                                <input type="button" value="<<     Отменить     >>" style="width:150px"
                                        onclick = "window.location.href = '${canceledOrder}'"/>
+                                <br>
+                                <p> </p>
                             </td>
                         </tr>
                     </table>

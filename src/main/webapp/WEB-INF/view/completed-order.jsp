@@ -5,14 +5,13 @@
     <title>Закрытие заявки</title>
 </head>
 <body>
-<font size="4" face="Courier New" >
-    <p>${user.name}, вы закрываете заявку, как выполненую!</p>
-    <p>Ваш баланс: ${user.balance} грн</p>
+<font size="4" face="Courier New">
+    <p><b>${user.name}, вы закрываете заявку, как выполненую!</b></p>
 </font>
 <br>
 <br>
-<font size="4" face="Courier New" >
-    <p>Заявка № ${order.id}</p>
+<font size="3" face="Courier New" >
+    <p>Заявка   № ${order.id}</p>
     <p>Дата     : ${order.date}</p>
     <p>Заказчик : ${order.orderDetails.customerName}</p>
     <p>Адрес    : ${order.orderDetails.address}</p>
@@ -24,14 +23,14 @@
 <h3>Отчет о заявке </h3>
 <form:form action="saveCompletedOrder" modelAttribute="order">
     <form:hidden path="id"/>
-    <p>Введите площадь утепления :</p>>
-    <form:input path="squareArea"/>
-    <p>Введите сумму оплаты клиентом :</p>>
-    <form:input path="sumOfPaymentCustomer"/>
+    <p><b>Введите площадь утепления :</b><br>
+    >><form:input type="text" size="20" path="squareArea"/></p>
+
+    <p><b>Введите сумму оплаты клиентом :</b><br>
+    >><form:input type="text" size="20" path="sumOfPaymentCustomer"/>
+    </p>
     <br>
-    <br>
-    <br>
-    <input type="submit" value="Сохранить" />
+    <p><input type="submit" value="<<  Сохранить  >>" /></p>
 </form:form>
 
 </body>

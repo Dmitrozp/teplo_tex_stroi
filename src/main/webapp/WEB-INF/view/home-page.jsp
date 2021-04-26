@@ -11,12 +11,16 @@
         <th align="left">
             <img width=100% src="${pageContext.request.contextPath}/img/logo1.jpg"/>
         </th>
-        <th>
+        <th width="50%">
             <font size="5" face="Courier New" >
                 <p align="right"> Привет: гость </p>
-                <form method="LINK" action="http://134.249.133.144:8080/order">
-                    <input align="50%" type="submit" value="Войти">
+                <form method="LINK" action="/order" align="right">
+                    <input style="width:200px" type="submit" value="<< Войти >>"/>
                 </form>
+            </font>
+            <font size="4" face="Courier New" align="right">
+                <p>Для получения логина и пароля,</p>
+                <p>обращаться в viber 066 201 93 93</p>
             </font>
         </th>
     </tr>
@@ -36,7 +40,6 @@
             <th>Город</th>
             <th>Телефон</th>
             <th>Площадь утепления</th>
-            <th>Примечание</th>
         </tr>
 
         <c:forEach var="orders" items="${orders}" >
@@ -48,7 +51,7 @@
 
                     <fmt:formatDate value="${parsedDateTime}" pattern="dd.MM.yyyy" />
                     <br>
-                    <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm:ss" />
+                    <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm" />
                 </td>
                 <td>${orders.orderDetails.customerName}</td>
                 <td>${orders.orderDetails.address}</td>
@@ -56,7 +59,6 @@
                 <td>${orders.orderDetails.city}</td>
                 <td>${orders.orderDetails.phoneNumber}</td>
                 <td>${orders.orderDetails.squareArea}</td>
-                <td>${orders.orderDetails.notes}</td>
             </tr>
         </c:forEach>
     </table>

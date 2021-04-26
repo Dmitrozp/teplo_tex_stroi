@@ -15,8 +15,8 @@
                 <p align="right">Город: ${user.city} </p>
                 <p align="right">Логин: ${user.loginName}</p>
                 <p align="right">Баланс: ${user.balance} грн</p>
-                <form  align="right" method="LINK" action="http://134.249.133.144:8080/profile">
-                    <input type="submit" value="Войти в личный кабинет" style="width: 250px; height: 30px;">
+                <form  align="right" method="LINK" action="/profile">
+                    <input type="submit" value="<< Войти в личный кабинет >>" style="width: 250px; height: 30px;">
                 </form>
             </font>
         </th>
@@ -54,7 +54,7 @@
 
                 <fmt:formatDate value="${parsedDateTime}" pattern="dd.MM.yyyy" />
                 <br>
-                <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm:ss" />
+                <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm" />
             </td>
             <td>${orders.orderDetails.customerName}</td>
             <td>${orders.orderDetails.address}</td>

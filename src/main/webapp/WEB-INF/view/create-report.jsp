@@ -14,7 +14,7 @@
 <form:form action="saveReport" modelAttribute="report">
     <form:hidden path="id"/>
     <form:hidden path="order.id"/>
-    <form:textarea path="description" style="width: 300px; height: 300px;" />
+    <form:textarea path="description" cols="50" rows="6" />
     <br>
     <br>
     <br>
