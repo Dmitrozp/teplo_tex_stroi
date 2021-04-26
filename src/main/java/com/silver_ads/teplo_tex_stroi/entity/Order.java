@@ -29,7 +29,7 @@ public class Order {
     private Integer sumOfPaymentCustomer;
     @Column(name = "sum_payment")
     private Integer sumPayment;
-    @Column(name = "payment_status")
+    @Column(name = "status_payment")
     private String statusPayment;
 
     @OneToOne(cascade = CascadeType.ALL)
