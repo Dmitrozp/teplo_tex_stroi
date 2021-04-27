@@ -18,11 +18,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+//        http.requiresChannel().anyRequest().requiresSecure();
+
         http.authorizeRequests()
                 .antMatchers("/order/**").authenticated()
                 .antMatchers("/profile/**").authenticated()
                 .antMatchers("/admin", "/manager").hasAnyRole("ADMIN", "MANAGER")
-//                .antMatchers("/api/**").anonymous()
                 .and()
                 .formLogin()
                 .and()
