@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,9 +31,10 @@ public class FacebookServices {
     @Value("${marketing_account_id}")
     private String marketingAccountId;
 
-    public APINodeList<AdsInsights> getStatisticsAdsFromFacebook() throws APIException {
+    public List<AdsInsights> getStatisticsAdsFromFacebook() throws APIException {
 
         final int COUNT_OF_RESULTS_NEXT_PAGE = 100000;
+        List<AdsInsights> statisticsFinalList = new ArrayList<>();
         APIContext context = new APIContext(accessToken).enableDebug(true);
 
         APINodeList<AdsInsights> statistics = new AdAccount(marketingAccountId, context).getInsights()
@@ -126,14 +128,20 @@ public class FacebookServices {
 //          .requestField("adgroup_name")
                 .execute();
 
-        APINodeList<AdsInsights> statisticsFinalList = statistics;
-        statisticsFinalList.addAll(statistics.nextPage(COUNT_OF_RESULTS_NEXT_PAGE));
 
+        if (statistics != null) {
+            statisticsFinalList.addAll(statistics);
+
+            if (statistics.nextPage(COUNT_OF_RESULTS_NEXT_PAGE).isEmpty()) {
+                return statisticsFinalList;
+            } else {
+                statisticsFinalList.addAll(statistics);
+            }
+        }
         return statisticsFinalList;
-
     }
 
-    public void saveStatisticsFromFB(APINodeList<AdsInsights> adsInsights){
+    public void saveStatisticsFromFB(List<AdsInsights> adsInsights) {
         List<AdsInsightsDTO> adsInsightsDTOList = adsInsights.stream().map(adsInsight ->
                 new AdsInsightsDTO().fransformFrom(adsInsight)).collect(Collectors.toList());
 
