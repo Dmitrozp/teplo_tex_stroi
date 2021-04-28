@@ -7,8 +7,12 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 
 @EnableWebSecurity
 public class WebSecurity extends WebSecurityConfigurerAdapter {
@@ -32,20 +36,20 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .csrf().disable();
     }
 
-//    @Bean
-//    public UserDetailsManager users(){
-//        UserDetails admin= User.builder()
-//                .username("admin")
-//                .password("{noop}admin")
-//                .roles("ADMIN", "USER")
-//                .build();
-//        UserDetails guest = User.builder()
-//                .username("guest")
-//                .password("{noop}guest")
-//                .roles("USER")
-//                .build();
-//        return new InMemoryUserDetailsManager(admin,guest);
-//    }
+    @Bean
+    public UserDetailsManager users(){
+        UserDetails admin= User.builder()
+                .username("admin")
+                .password("{noop}admin")
+                .roles("ADMIN", "USER")
+                .build();
+        UserDetails guest = User.builder()
+                .username("guest")
+                .password("{noop}guest")
+                .roles("USER")
+                .build();
+        return new InMemoryUserDetailsManager(admin,guest);
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
