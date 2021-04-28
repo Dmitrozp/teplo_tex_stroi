@@ -9,10 +9,13 @@ import com.silver_ads.teplo_tex_stroi.service.OrderServices;
 import com.silver_ads.teplo_tex_stroi.service.ReportServices;
 import com.silver_ads.teplo_tex_stroi.service.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -74,6 +77,13 @@ public class ControllerOrder {
 
         return "redirect:/manager";
     }
+
+    @RequestMapping(value = "/.well-known/pki-validation/D0AA6539E8AB5A083BFE76B3F53DD589.txt", method = RequestMethod.GET)
+    @ResponseBody
+    public FileSystemResource getFile() {
+        return new FileSystemResource(new File("src/main/resources/D0AA6539E8AB5A083BFE76B3F53DD589.txt"));
+    }
+
 
     @RequestMapping("/order/createReport")
     public String createReport(@RequestParam("orderId") int orderId, Principal principal, Model model) {
