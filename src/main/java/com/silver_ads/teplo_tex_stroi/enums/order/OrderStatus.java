@@ -1,4 +1,4 @@
-package com.silver_ads.teplo_tex_stroi.enums;
+package com.silver_ads.teplo_tex_stroi.enums.order;
 
 public enum OrderStatus {
     IN_WORK,

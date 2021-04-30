@@ -19,7 +19,7 @@ public class Report {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "login_name")
-    private User userExecutor;
+    private User userCreator;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")

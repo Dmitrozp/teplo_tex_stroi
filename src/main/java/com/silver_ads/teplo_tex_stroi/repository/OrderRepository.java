@@ -2,7 +2,6 @@ package com.silver_ads.teplo_tex_stroi.repository;
 
 import com.silver_ads.teplo_tex_stroi.entity.Order;
 import com.silver_ads.teplo_tex_stroi.entity.User;
-import com.silver_ads.teplo_tex_stroi.enums.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

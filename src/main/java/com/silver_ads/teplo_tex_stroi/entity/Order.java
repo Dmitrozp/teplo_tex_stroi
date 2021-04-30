@@ -20,20 +20,15 @@ public class Order {
     private LocalDateTime date;
     @Column(name = "user_creator")
     private String userCreator;
-    @Column(name = "order_status")
+    @Column(name = "status_order")
     private String statusOrder;
-
-    @Column(name = "square_area")
-    private Integer squareArea;
-    @Column(name = "sum_payment_customer")
-    private Integer sumOfPaymentCustomer;
     @Column(name = "sum_payment")
     private Integer sumPayment;
     @Column(name = "status_payment")
     private String statusPayment;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_order_details")
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_details")
     private OrderDetails orderDetails;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

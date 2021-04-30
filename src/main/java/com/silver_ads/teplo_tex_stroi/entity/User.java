@@ -15,31 +15,22 @@ public class User {
     private String loginName;
     @Column(name = "password")
     private String password;
-    @Column(name = "name")
-    private String name;
-    @Column(name = "last_name")
-    private String lastName;
-    @Column(name = "city")
-    private String city;
-    @Column(name = "description")
-    private String description;
-    @Column(name = "phone_number")
-    private String phoneNumber;
+    @Column(name = "user_status")
+    private String userStatus;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_details")
+    private UserDetails userDetails;
 
     @OneToMany(cascade = CascadeType.ALL,
             mappedBy = "userExecutor")
     private List<Order> orders;
 
     @OneToMany(cascade = CascadeType.ALL,
-            mappedBy = "userExecutor")
+            mappedBy = "userCreator")
     private List<Report> reports;
 
-    @Column(name = "max_orders")
-    private Integer maxOrders;
-    @Column(name = "balance")
-    private Integer balance;
-
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "login_name"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))

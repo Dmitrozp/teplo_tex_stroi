@@ -6,7 +6,7 @@
 </head>
 <body>
 <font size="4" face="Courier New">
-    <p><b>${user.name}, вы закрываете заявку, как выполненую!</b></p>
+    <p><b>${user.userDetails.name}, вы закрываете заявку, как выполненую!</b></p>
 </font>
 <br>
 <br>
@@ -24,10 +24,10 @@
 <form:form action="saveCompletedOrder" modelAttribute="order">
     <form:hidden path="id"/>
     <p><b>Введите площадь утепления :</b><br>
-    >><form:input type="text" size="20" path="squareArea"/></p>
+    >><form:input type="text" size="20" path="orderDetails.squareAreaFromReport"/></p>
 
     <p><b>Введите сумму оплаты клиентом :</b><br>
-    >><form:input type="text" size="20" path="sumOfPaymentCustomer"/>
+    >><form:input type="text" size="20" path="orderDetails.sumOfPaymentCustomer"/>
     </p>
     <br>
     <p><input type="submit" value="<<  Сохранить  >>" /></p>

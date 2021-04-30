@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <%@page contentType="text/html;charset=UTF-8" language="java"%>
 <!DOCTYPE html>
 <html>
@@ -10,14 +11,29 @@
             <img width=100% src="${pageContext.request.contextPath}/img/logo1.jpg"/>
         </th>
         <th width="50%">
+            <form  align="right" method="LINK" action="/logout">
+                <input type="submit" value="<< Выйти >>" style="width: 250px; height: 30px;">
+            </form>
             <font size="4" face="Courier New" >
-                <p align="right"> ${user.name} ${user.lastName} </p>
-                <p align="right">Город: ${user.city} </p>
+                <p align="right">Привет  ${user.userDetails.name} ${user.userDetails.lastName} Ваш город: ${user.userDetails.city} </p>
                 <p align="right">Логин: ${user.loginName}</p>
-                <p align="right">Баланс: ${user.balance} грн</p>
+
+                <p align="right">Баланс: ${user.userDetails.balance} грн</p>
+                <p align="right">Макс. заявок: <b style="color: #ff3300">${user.userDetails.maxCountOrders} </b>
+                    Заявок в работе: <b style="color: #ff0000">${countOrders}</b></p>
+                <p align="right">Макс. отмен заявок : <b style="color: #ff0000">${user.userDetails.maxCountCanceledOrders} </b>
+                    Отмененных заявок : <b style="color: #ff0000">${user.userDetails.currentCanceledCountOrders}</b></p>
+
+                <security:authorize access="hasAnyRole('ADMIN', 'MANAGER')">
+                <form  align="right" method="LINK" action="/manager">
+                    <input type="submit" value="<< Панель для менеджера >>" style="width: 250px; height: 30px;">
+                </form>
+                </security:authorize>
+<security:authorize access="hasAnyRole('USER', 'ADMIN')">
                 <form  align="right" method="LINK" action="/profile">
                     <input type="submit" value="<< Войти в личный кабинет >>" style="width: 250px; height: 30px;">
                 </form>
+</security:authorize>
             </font>
         </th>
     </tr>

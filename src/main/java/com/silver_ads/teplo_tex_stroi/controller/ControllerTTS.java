@@ -3,8 +3,7 @@ package com.silver_ads.teplo_tex_stroi.controller;
 import com.silver_ads.teplo_tex_stroi.entity.Order;
 import com.silver_ads.teplo_tex_stroi.entity.Report;
 import com.silver_ads.teplo_tex_stroi.entity.User;
-import com.silver_ads.teplo_tex_stroi.enums.OrderStatus;
-import com.silver_ads.teplo_tex_stroi.enums.PaymentStatus;
+import com.silver_ads.teplo_tex_stroi.enums.order.OrderStatus;
 import com.silver_ads.teplo_tex_stroi.service.OrderServices;
 import com.silver_ads.teplo_tex_stroi.service.ReportServices;
 import com.silver_ads.teplo_tex_stroi.service.UserServices;
@@ -14,15 +13,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.io.File;
-import java.nio.file.Path;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-public class ControllerOrder {
+public class ControllerTTS {
     @Autowired
     OrderServices orderServices;
     @Autowired
@@ -43,26 +42,47 @@ public class ControllerOrder {
         List<Order> orders = orderServices.getOrdersWithHidePhoneAndStatusOrder(OrderStatus.NEW_ORDER_VERIFIED.name());
         model.addAttribute("orders", orders);
         model.addAttribute("user", user);
+        model.addAttribute("countOrders", user.getOrders().size());
 
         return "all-orders";
     }
 
     @RequestMapping("/order/addOrder")
-    public String addOrder(@RequestParam("orderId") int orderId, Principal principal) {
+    public String addOrder(@RequestParam("orderId") int orderId, Principal principal) throws Exception {
         String userLogin = principal.getName();
         Order order = orderServices.getOrderById(orderId);
         User user = userServices.getUserByLoginName(userLogin);
-        orderServices.addOrderToUser(order, user);
+        if (user.getOrders().size() < user.getUserDetails().getMaxCountOrders()) {
+            orderServices.addOrderToUser(order, user);
+            user.getUserDetails().setCurrentCountOrders(user.getOrders().size());
+            userServices.save(user);
+        } else {
+            throw new Exception("You have many orders or many canceled orders");
+        }
         return "redirect:/order";
     }
 
     @RequestMapping("/manager")
     public String showOrdersForManagersPanel(Model model, Principal principal) {
         User user = userServices.getUserByLoginName(principal.getName());
-        List<Order> orders =
+        List<Order> newOrders =
                 orderServices.getOrdersForManagerByStatusAndManagerLoginName(OrderStatus.NEW_ORDER_NOT_VERIFIED.name(), user);
+        List<Order> completedOrders =
+                orderServices.getOrdersForManagerByStatusAndManagerLoginName(OrderStatus.COMPLETED.name(), user);
+        List<Order> canceledOrders =
+                orderServices.getOrdersForManagerByStatusAndManagerLoginName(OrderStatus.CANCELED.name(), user);
 
-        model.addAttribute("orders", orders);
+        int countNewOrders = newOrders.size();
+        model.addAttribute("newOrders", newOrders);
+        model.addAttribute("countNewOrders", countNewOrders);
+
+        int countCompletedOrders = completedOrders.size();
+        model.addAttribute("completedOrders", completedOrders);
+        model.addAttribute("countCompletedOrders", countCompletedOrders);
+
+        int countCanceledOrders = canceledOrders.size();
+        model.addAttribute("canceledOrders", canceledOrders);
+        model.addAttribute("countCanceledOrders", countCanceledOrders);
         model.addAttribute("user", user);
 
         return "manager-panel";
@@ -72,7 +92,7 @@ public class ControllerOrder {
     public String sendOrderInWork(@RequestParam("orderId") int orderId, Principal principal, Model model) {
         Order order = orderServices.getOrderById(orderId);
         order.setStatusOrder(OrderStatus.NEW_ORDER_VERIFIED.name());
-        orderServices.saveOrder(order);
+        orderServices.save(order);
         User user = userServices.getUserByLoginName(principal.getName());
 
         return "redirect:/manager";
@@ -91,7 +111,7 @@ public class ControllerOrder {
         User user = userServices.getUserByLoginName(principal.getName());
         Report report = new Report();
         report.setOrder(order);
-        report.setUserExecutor(user);
+        report.setUserCreator(user);
         reportServices.saveReport(report);
 
         model.addAttribute("report", report);
@@ -109,30 +129,28 @@ public class ControllerOrder {
     }
 
     @RequestMapping("/order/createCanceledOrder")
-    public String createCanceledOrder(@RequestParam("orderId") int orderId, Principal principal, Model model) {
+    public String createCanceledOrder(@RequestParam("orderId") int orderId, Principal principal, Model model) throws Exception {
         Order order = orderServices.getOrderById(orderId);
         User user = userServices.getUserByLoginName(principal.getName());
-        Report report = new Report();
-        report.setUserExecutor(user);
-        report.setOrder(order);
 
-        model.addAttribute("order", order);
-        model.addAttribute("user", user);
-        model.addAttribute("report", report);
+        if (user.getUserDetails().getCurrentCanceledCountOrders() < user.getUserDetails().getMaxCountCanceledOrders()) {
+            Report report = new Report();
+            report.setUserCreator(user);
+            report.setOrder(order);
+
+            model.addAttribute("order", order);
+            model.addAttribute("user", user);
+            model.addAttribute("report", report);
+        } else {
+            throw new Exception("You have many canceled orders");
+        }
 
         return "canceled-order";
     }
 
     @RequestMapping("/order/saveCanceledOrder")
     public String saveCanceledOrder(@ModelAttribute("report") Report report, Principal principal) {
-        Order order = orderServices.getOrderById(report.getOrder().getId());
-        User user = userServices.getUserByLoginName(principal.getName());
-        report.setDescription("ОТМЕНА! исполнителем логин " + user.getLoginName()
-                + " Имя: " + user.getName() + " Заявка ID: " + order.getId()
-                + " Причина отмены : " + report.getDescription());
-        report.setDate(LocalDateTime.now());
-        order.addReport(report);
-        orderServices.saveOrder(order);
+        orderServices.saveCanceledOrder(report,principal.getName());
 
         return "redirect:/profile";
     }

@@ -3,6 +3,7 @@ package com.silver_ads.teplo_tex_stroi.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -14,9 +15,16 @@ public class Role {
     @Column(name = "name")
     private String name;
 
-//    @ManyToMany
-//    @JoinTable(name = "users_roles",
-//    joinColumns = @JoinColumn(name = "role_id"),
-//    inverseJoinColumns = @JoinColumn(name = "login_name"))
-//    private List<User> users;
+    @ManyToMany
+    @JoinTable(name = "users_roles",
+    joinColumns = @JoinColumn(name = "role_id"),
+    inverseJoinColumns = @JoinColumn(name = "login_name"))
+    private List<User> users;
+
+    public Role() {
+    }
+
+    public Role(String name) {
+        this.name = name;
+    }
 }

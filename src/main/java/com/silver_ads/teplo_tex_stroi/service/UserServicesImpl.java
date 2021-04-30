@@ -3,6 +3,7 @@ package com.silver_ads.teplo_tex_stroi.service;
 import com.silver_ads.teplo_tex_stroi.entity.Order;
 import com.silver_ads.teplo_tex_stroi.entity.Role;
 import com.silver_ads.teplo_tex_stroi.entity.User;
+import com.silver_ads.teplo_tex_stroi.repository.RoleRepository;
 import com.silver_ads.teplo_tex_stroi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +25,8 @@ public class UserServicesImpl implements UserServices, UserDetailsService {
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    RoleRepository roleRepository;
 
     public User addOrder(Order order, User user) {
         if (user.getOrders() == null) {
@@ -38,6 +43,30 @@ public class UserServicesImpl implements UserServices, UserDetailsService {
     }
 
     @Override
+    public User findManagerWhoCanAcceptOrder(){
+        User userManager = findManagerWithMinOrdersInWork();
+        if (userManager == null){
+            userManager = findAdminWithMinOrdersInWork();
+        }
+        return userManager;
+    }
+
+    private User findManagerWithMinOrdersInWork() {
+        List<User> userList = userRepository.findUsersByRoles(roleRepository.findRoleByName("ROLE_MANAGER"));
+        Optional<User> userWithMinOrders = userList.stream().min((user1, user2) -> user1.getOrders().size()-user2.getOrders().size());
+
+        return userWithMinOrders.get();
+    }
+
+    private User findAdminWithMinOrdersInWork(){
+        List<User> userList = userRepository.findUsersByRoles(roleRepository.findRoleByName("ROLE_ADMIN"));
+        Optional<User> userWithMinOrders = userList.stream().min((user1, user2) -> user1.getOrders().size()-user2.getOrders().size());
+
+        return userWithMinOrders.get();
+
+    }
+
+    @Override
     public User save(User user) {
         return userRepository.save(user);
     }
@@ -48,7 +77,6 @@ public class UserServicesImpl implements UserServices, UserDetailsService {
         return user;
     }
 
-    @Transactional
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         User user = userRepository.findUserByLoginName(login);

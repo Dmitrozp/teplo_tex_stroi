@@ -3,6 +3,7 @@ package com.silver_ads.teplo_tex_stroi.controller;
 import com.silver_ads.teplo_tex_stroi.entity.Order;
 import com.silver_ads.teplo_tex_stroi.entity.OrderDetails;
 import com.silver_ads.teplo_tex_stroi.exception_handling.NoSuchOrderDetailsException;
+import com.silver_ads.teplo_tex_stroi.service.OrderDetailsServices;
 import com.silver_ads.teplo_tex_stroi.service.OrderServicesImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,9 +12,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-public class RESTControllerOrder {
+public class RESTController {
     @Autowired
     OrderServicesImpl orderServices;
+    @Autowired
+    OrderDetailsServices orderDetailsServices;
 
     @GetMapping("/order")
     public List<Order> getAllOrder() {
@@ -32,7 +35,7 @@ public class RESTControllerOrder {
                     + ";  city = " + orderDetailsExternal.getCity() + "  must not be null");
         }
 
-        Order order = orderServices.createOrder(orderDetailsExternal);
+        Order order = orderServices.createNewOrderFromFormSite(orderDetailsExternal);
 
         return order;
     }

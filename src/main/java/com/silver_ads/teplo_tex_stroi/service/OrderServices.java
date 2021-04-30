@@ -4,7 +4,6 @@ import com.silver_ads.teplo_tex_stroi.entity.Order;
 import com.silver_ads.teplo_tex_stroi.entity.OrderDetails;
 import com.silver_ads.teplo_tex_stroi.entity.Report;
 import com.silver_ads.teplo_tex_stroi.entity.User;
-import com.silver_ads.teplo_tex_stroi.enums.OrderStatus;
 
 import java.util.List;
 
@@ -12,7 +11,7 @@ public interface OrderServices {
 
     List<Order> getAllOrder();
 
-    void saveOrder(Order order);
+    void save(Order order);
 
     Order getOrderById(long id);
 
@@ -28,8 +27,12 @@ public interface OrderServices {
 
     Order createOrder(OrderDetails orderDetailsExternal);
 
+    Order createNewOrderFromFormSite(OrderDetails orderDetailsExternal);
+
     List<Order> getOrdersForManagerByStatusAndManagerLoginName(String orderStatus, User user);
 
     void saveCompletedOrder(Order orderWithChanges, User user);
+
+    void saveCanceledOrder(Report report, String loginName);
 
 }

@@ -6,8 +6,8 @@
 </head>
 <body>
 <font size="4" face="Courier New" >
-    <p>${user.name}, вы хотите отменить заявку!</p>
-    <p>Ваш баланс: ${user.balance} грн</p>
+    <p>${user.userDetails.name}, вы хотите отменить заявку!</p>
+    <p>Ваш баланс: ${user.userDetails.balance} грн</p>
 </font>
 <br>
 <br>

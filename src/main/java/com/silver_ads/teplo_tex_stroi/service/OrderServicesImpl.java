@@ -3,8 +3,11 @@ package com.silver_ads.teplo_tex_stroi.service;
 import com.silver_ads.teplo_tex_stroi.entity.OrderDetails;
 import com.silver_ads.teplo_tex_stroi.entity.Report;
 import com.silver_ads.teplo_tex_stroi.entity.User;
-import com.silver_ads.teplo_tex_stroi.enums.OrderStatus;
+import com.silver_ads.teplo_tex_stroi.enums.order.OrderSource;
+import com.silver_ads.teplo_tex_stroi.enums.order.OrderStatus;
 import com.silver_ads.teplo_tex_stroi.enums.PaymentStatus;
+import com.silver_ads.teplo_tex_stroi.enums.order.OrderType;
+import com.silver_ads.teplo_tex_stroi.repository.OrderDetailsRepository;
 import com.silver_ads.teplo_tex_stroi.repository.OrderRepository;
 import com.silver_ads.teplo_tex_stroi.entity.Order;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,12 @@ public class OrderServicesImpl implements OrderServices {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderDetailsRepository orderDetailsRepository;
+
+    @Autowired
+    UserServicesImpl userServices;
 
     @Override
     public List<Order> getAllOrder() {
@@ -49,27 +58,56 @@ public class OrderServicesImpl implements OrderServices {
     @Override
     public void saveCompletedOrder(Order orderWithChanges, User user){
         Order order = getOrderById(orderWithChanges.getId());
-        order.setSquareArea(orderWithChanges.getSquareArea());
-        order.setSumOfPaymentCustomer(orderWithChanges.getSumOfPaymentCustomer());
+        order.getOrderDetails().setSquareAreaFromReport(orderWithChanges.getOrderDetails().getSquareAreaFromReport());
+        order.getOrderDetails().setSumOfPaymentCustomer(orderWithChanges.getOrderDetails().getSumOfPaymentCustomer());
         order.setStatusPayment(PaymentStatus.PROCESSING.name());
+        order.setStatusOrder(OrderStatus.COMPLETED.name());
         Report report = new Report();
         report.setOrder(order);
         report.setDate(LocalDateTime.now());
         report.setDescription("ВЫПОЛНЕНA! исполнителем логин " + user.getLoginName()
-                + " Имя: " + user.getName() + " Заявка ID: " + order.getId()
-                + " Площадь утепления: " + order.getSquareArea()
-                + " Сумма оплаты клиентом: " + order.getSumOfPaymentCustomer());
-        report.setUserExecutor(user);
+                + " Имя: " + user.getUserDetails().getName() + " Заявка ID: " + order.getId()
+                + " Площадь утепления: " + order.getOrderDetails().getSquareAreaFromReport()
+                + " Сумма оплаты клиентом: " + order.getOrderDetails().getSumOfPaymentCustomer());
+        report.setUserCreator(user);
         order.addReport(report);
+        order.setUserExecutor(userServices.findManagerWhoCanAcceptOrder());
         orderRepository.save(order);
+    }
+
+    @Override
+    public void saveCanceledOrder(Report report, String loginName){
+        final int NEW_CANCELED_ORDER = 1;
+        Order order = getOrderById(report.getOrder().getId());
+        User user = userServices.getUserByLoginName(loginName);
+
+        report.setDescription("ОТМЕНА! исполнителем логин " + user.getLoginName()
+                + " Имя: " + user.getUserDetails().getName() + " Заявка ID: " + order.getId()
+                + " Причина отмены : " + report.getDescription());
+        report.setDate(LocalDateTime.now());
+        report.setUserCreator(user);
+        order.addReport(report);
+        order.setStatusOrder(OrderStatus.CANCELED.name());
+        order.setUserExecutor(userServices.findManagerWhoCanAcceptOrder());
+        orderRepository.save(order);
+        int currentCanceledCountOrders = user.getUserDetails().getCurrentCanceledCountOrders();
+        user.getUserDetails().setCurrentCanceledCountOrders(currentCanceledCountOrders + NEW_CANCELED_ORDER );
+        userServices.save(user);
     }
 
     @Override
     public List<Order> getOrdersWithHidePhoneAndStatusOrder(String orderStatus) {
         List<Order> orders = orderRepository.findOrdersByStatusOrder(orderStatus);
         orders.stream().map(order -> {
-                        order.getOrderDetails().setPhoneNumber(hidingPhoneNumber(order.getOrderDetails().getPhoneNumber()));
-                        return order;
+            try {
+            if (order.getOrderDetails().getPhoneNumber() != null) {
+                order.getOrderDetails().setPhoneNumber(hidingPhoneNumber(order.getOrderDetails().getPhoneNumber()));
+            } else
+                throw new Exception("Order not include phone number");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return order;
                 }
         ).collect(Collectors.toList());
         return orders;
@@ -87,7 +125,7 @@ public class OrderServicesImpl implements OrderServices {
     }
 
     @Override
-    public void saveOrder(Order order) {
+    public void save(Order order) {
         if (order.getDate() == null) {
             order.setDate(LocalDateTime.now());
         }
@@ -125,7 +163,24 @@ public class OrderServicesImpl implements OrderServices {
         order.setStatusOrder(OrderStatus.NEW_ORDER_NOT_VERIFIED.name());
         order.setStatusPayment(PaymentStatus.UNKNOWN.name());
         order.setOrderDetails(orderDetails);
+        orderDetails.setOrder(order);
         orderRepository.save(order);
+        return order;
+    }
+
+    @Override
+    public Order createNewOrderFromFormSite(OrderDetails orderDetailsExternal) {
+        Order order = new Order();
+        order.setUserCreator("admin"); //TODO создатель заявки, заявки приходит с сайта
+        order.setDate(LocalDateTime.now());
+        order.setStatusOrder(OrderStatus.NEW_ORDER_NOT_VERIFIED.name());
+        order.setStatusPayment(PaymentStatus.UNKNOWN.name());
+        order.setOrderDetails(orderDetailsExternal);
+        order.getOrderDetails().setTypeOrder(OrderType.PROSCHET_NA_UTEPLENIE.name());
+        order.getOrderDetails().setSourceOrder(OrderSource.FORM_SITE_SILVER_ADS_COM.name());
+        order.setUserExecutor(userServices.findManagerWhoCanAcceptOrder());
+        save(order);
+        order.setUserExecutor(null);
         return order;
     }
 
@@ -141,5 +196,7 @@ public class OrderServicesImpl implements OrderServices {
         }
         return resultPhoneNumber;
     }
+
+
 
 }

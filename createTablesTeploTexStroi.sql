@@ -36,11 +36,11 @@ CREATE TABLE silverads.user_details (
                                         city varchar(25),
                                         description varchar(25),
                                         phone_number varchar(25),
-                                        max_count_orders int8,
-                                        current_count_orders int8,
-                                        max_count_canceled_orders int8,
-                                        current_canceled_count_orders int8,
-                                        balance int8,
+                                        max_count_orders int8 DEFAULT 0,
+                                        current_count_orders int8 DEFAULT 0,
+                                        max_count_canceled_orders int8 DEFAULT 0,
+                                        current_canceled_count_orders int8 DEFAULT 0,
+                                        balance int8 DEFAULT 0,
                                         login_name varchar(25),
                                         PRIMARY KEY (id)
 ) ;
@@ -160,3 +160,6 @@ CREATE TABLE silverads.ads_statistics_fb (
                                              date_start varchar(25),
                                              PRIMARY KEY (`id`)
 );
+
+
+

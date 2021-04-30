@@ -9,14 +9,18 @@
 <table border="0">
     <tr>
         <th align="left">
-            <img width=100% src="${pageContext.request.contextPath}/img/logo1.jpg"/>
+            <img width=100%  src="${pageContext.request.contextPath}/img/logo1.jpg"/>
         </th>
         <th width="50%">
             <font size="4" face="Courier New" >
-                <p align="right"> ${user.name} ${user.lastName} </p>
-                <p align="right">Город: ${user.city} </p>
+                <p align="right">Привет  ${user.userDetails.name} ${user.userDetails.lastName} Ваш город: ${user.userDetails.city} </p>
                 <p align="right">Логин: ${user.loginName}</p>
-                <p align="right">Баланс: ${user.balance} грн</p>
+                <p align="right">Баланс: ${user.userDetails.balance} грн</p>
+                <p align="right">Макс. заявок: <b style="color: #ff3300">${user.userDetails.maxCountOrders} </b>
+                    Заявок в работе: <b style="color: #ff0000">${countOrders}</b></p>
+                <p align="right">Макс. отмен заявок : <b style="color: #ff0000">${user.userDetails.maxCountCanceledOrders} </b>
+                    Отмененных заявок : <b style="color: #ff0000">${user.userDetails.currentCanceledCountOrders}</b></p>
+
                 <form method="LINK" align="right" action="/order">
                     <input  type="submit" value="<<  Взять заявку  >>" style="width: 150px; height: 30px;">
                 </form>
