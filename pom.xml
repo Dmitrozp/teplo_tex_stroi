@@ -15,7 +15,7 @@
     <name>teplo_tex_stroi</name>
     <description>TeploTexStroi CRM</description>
     <properties>
-        <java.version>11</java.version>
+        <java.version>15</java.version>
     </properties>
     <dependencies>
         <dependency>
