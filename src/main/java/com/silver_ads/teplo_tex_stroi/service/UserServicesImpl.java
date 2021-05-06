@@ -54,7 +54,9 @@ public class UserServicesImpl implements UserServices, UserDetailsService {
     private User findManagerWithMinOrdersInWork() {
         List<User> userList = userRepository.findUsersByRoles(roleRepository.findRoleByName("ROLE_MANAGER"));
         Optional<User> userWithMinOrders = userList.stream().min((user1, user2) -> user1.getOrders().size()-user2.getOrders().size());
-
+        if (userWithMinOrders.isEmpty()){
+            return userList.get(0);
+        }
         return userWithMinOrders.get();
     }
 

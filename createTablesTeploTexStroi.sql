@@ -13,7 +13,6 @@ CREATE TABLE silverads.order_details (
                                          phone_number varchar(255) DEFAULT NULL,
                                          source_order varchar(255) DEFAULT NULL,
                                          type_order varchar(255) DEFAULT NULL,
-                                         id_order BIGINT DEFAULT NULL,
                                          PRIMARY KEY (id)
 );
 CREATE TABLE silverads.orders (
@@ -24,7 +23,7 @@ CREATE TABLE silverads.orders (
                                   status_order varchar(255) DEFAULT NULL,
                                   sum_payment int8 DEFAULT '0',
                                   status_payment varchar(255) DEFAULT NULL,
-                                  id_details int8,
+                                  id_details int8 NOT NULL,
                                   PRIMARY KEY (id),
                                   FOREIGN KEY (id_details) REFERENCES order_details (id)
 
@@ -36,19 +35,18 @@ CREATE TABLE silverads.user_details (
                                         city varchar(25),
                                         description varchar(25),
                                         phone_number varchar(25),
-                                        max_count_orders int8 DEFAULT 0,
+                                        max_count_orders int8 DEFAULT 3,
                                         current_count_orders int8 DEFAULT 0,
-                                        max_count_canceled_orders int8 DEFAULT 0,
+                                        max_count_canceled_orders int8 DEFAULT 3,
                                         current_canceled_count_orders int8 DEFAULT 0,
                                         balance int8 DEFAULT 0,
-                                        login_name varchar(25),
                                         PRIMARY KEY (id)
 ) ;
 CREATE TABLE silverads.users (
                                  login_name varchar(25),
                                  password varchar(255),
                                  user_status varchar(25),
-                                 id_details int8,
+                                 id_details int8 NOT NULL,
                                  PRIMARY KEY (login_name),
                                  FOREIGN KEY (id_details) REFERENCES user_details (id)
 );

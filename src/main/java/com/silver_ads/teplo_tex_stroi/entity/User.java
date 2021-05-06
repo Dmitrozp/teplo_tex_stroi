@@ -1,13 +1,17 @@
 package com.silver_ads.teplo_tex_stroi.entity;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
-@Data
 @Table(name = "users")
 public class User {
     @Id
@@ -18,7 +22,7 @@ public class User {
     @Column(name = "user_status")
     private String userStatus;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "id_details")
     private UserDetails userDetails;
 
@@ -26,21 +30,22 @@ public class User {
             mappedBy = "userExecutor")
     private List<Order> orders;
 
-    @OneToMany(cascade = CascadeType.ALL,
-            mappedBy = "userCreator")
-    private List<Report> reports;
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "login_name"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles;
 
-    public void addOrder(Order order) {
-        if (this.orders == null) {
-            this.orders = new ArrayList<>();
-            this.orders.add(order);
-        }
-        this.orders.add(order);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return loginName.equals(user.loginName) && password.equals(user.password) && userStatus.equals(user.userStatus) && Objects.equals(userDetails, user.userDetails) && Objects.equals(orders, user.orders) && Objects.equals(roles, user.roles);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(loginName, password);
     }
 }

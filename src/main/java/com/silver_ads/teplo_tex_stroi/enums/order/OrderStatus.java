@@ -5,5 +5,6 @@ public enum OrderStatus {
     NEW_ORDER_VERIFIED,
     NEW_ORDER_NOT_VERIFIED,
     COMPLETED,
-    CANCELED;
+    CANCELED,
+    IN_ARCHIVE;
 }

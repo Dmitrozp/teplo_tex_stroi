@@ -2,6 +2,7 @@ package com.silver_ads.teplo_tex_stroi.controller;
 
 import com.silver_ads.teplo_tex_stroi.entity.Order;
 import com.silver_ads.teplo_tex_stroi.entity.Report;
+import com.silver_ads.teplo_tex_stroi.entity.Role;
 import com.silver_ads.teplo_tex_stroi.entity.User;
 import com.silver_ads.teplo_tex_stroi.enums.order.OrderStatus;
 import com.silver_ads.teplo_tex_stroi.service.OrderServices;
@@ -16,9 +17,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Controller
 public class ControllerTTS {
@@ -40,6 +41,10 @@ public class ControllerTTS {
     public String showAllOrders(Model model, Principal principal) {
         User user = userServices.getUserByLoginName(principal.getName());
         List<Order> orders = orderServices.getOrdersWithHidePhoneAndStatusOrder(OrderStatus.NEW_ORDER_VERIFIED.name());
+        if(user.getRoles().stream().filter(role -> role.getName().equals("ROLE_SUPER_USER")).count() == 1L)
+        {
+            orders.addAll(orderServices.getOrdersWithHidePhoneAndStatusOrder(OrderStatus.NEW_ORDER_NOT_VERIFIED.name()));
+        }
         model.addAttribute("orders", orders);
         model.addAttribute("user", user);
         model.addAttribute("countOrders", user.getOrders().size());
@@ -66,11 +71,15 @@ public class ControllerTTS {
     public String showOrdersForManagersPanel(Model model, Principal principal) {
         User user = userServices.getUserByLoginName(principal.getName());
         List<Order> newOrders =
-                orderServices.getOrdersForManagerByStatusAndManagerLoginName(OrderStatus.NEW_ORDER_NOT_VERIFIED.name(), user);
+                orderServices.getOrdersForManagerByStatusAndManagerLoginName(OrderStatus.NEW_ORDER_NOT_VERIFIED.name(), null);
         List<Order> completedOrders =
                 orderServices.getOrdersForManagerByStatusAndManagerLoginName(OrderStatus.COMPLETED.name(), user);
         List<Order> canceledOrders =
                 orderServices.getOrdersForManagerByStatusAndManagerLoginName(OrderStatus.CANCELED.name(), user);
+
+//        if(user.getRoles().stream().equals(new Role("SUPER_MANAGER"))){
+//            orderServices.
+//        }
 
         int countNewOrders = newOrders.size();
         model.addAttribute("newOrders", newOrders);
@@ -92,8 +101,8 @@ public class ControllerTTS {
     public String sendOrderInWork(@RequestParam("orderId") int orderId, Principal principal, Model model) {
         Order order = orderServices.getOrderById(orderId);
         order.setStatusOrder(OrderStatus.NEW_ORDER_VERIFIED.name());
+        //order.setUserExecutor(null);
         orderServices.save(order);
-        User user = userServices.getUserByLoginName(principal.getName());
 
         return "redirect:/manager";
     }
@@ -120,12 +129,23 @@ public class ControllerTTS {
     }
 
     @RequestMapping("/order/saveReport")
-    public java.lang.String saveReport(@ModelAttribute("report") Report report, Principal principal) {
+    public String saveReport(@ModelAttribute("report") Report report, Principal principal) {
+        User user = userServices.getUserByLoginName(principal.getName());
         Report reportResult = reportServices.findReportById(report.getId());
         reportResult.setDescription(report.getDescription());
         reportServices.saveReport(reportResult);
 
-        return "redirect:/profile";
+        AtomicReference<String> url = new AtomicReference<>();
+        user.getRoles().stream().forEach(role -> {
+            if(role.getName().equals("ROLE_USER") || role.getName().equals("ROLE_SUPER_USER")){
+                url.set("/profile");
+                return ;
+            } else {if (role.getName() == "ROLE_MANAGER" || role.getName() == "ROLE_SUPER_MANAGER"
+                    || role.getName() == "ROLE_ADMIN" ){
+                url.set("/manager");}
+            }
+        });
+        return "redirect:" + url;
     }
 
     @RequestMapping("/order/createCanceledOrder")
@@ -156,6 +176,61 @@ public class ControllerTTS {
     }
 
 
+    @RequestMapping("/order/edit")
+    public String editOrder(@RequestParam("orderId") int orderId, Principal principal, Model model){
+        Order order = orderServices.getOrderById(orderId);
+
+        model.addAttribute("order", order);
+
+        return "edit-order";
+    }
+
+    @RequestMapping("/order/saveEditedOrder")
+    public String saveEditedOrder(@ModelAttribute("order") Order editedOrder, Principal principal, Model model){
+        Order order = orderServices.getOrderById(editedOrder.getId());
+
+        if(editedOrder.getOrderDetails().getCustomerName() != "" ){
+            String name = editedOrder.getOrderDetails().getCustomerName();
+            order.getOrderDetails().setCustomerName(name);
+        }
+
+        if(editedOrder.getOrderDetails().getAddress() != "" ){
+            String address = editedOrder.getOrderDetails().getAddress();
+            order.getOrderDetails().setAddress(address);
+        }
+
+        if(editedOrder.getOrderDetails().getPhoneNumber() != "" ){
+            String phoneNumber = editedOrder.getOrderDetails().getPhoneNumber();
+            order.getOrderDetails().setPhoneNumber(phoneNumber);
+        }
+
+        if(editedOrder.getOrderDetails().getCity() != "" ){
+            String city = editedOrder.getOrderDetails().getCity();
+            order.getOrderDetails().setCity(city);
+        }
+
+        if(editedOrder.getOrderDetails().getCountRooms() != "" ){
+            String countRooms = editedOrder.getOrderDetails().getCountRooms();
+            order.getOrderDetails().setCountRooms(countRooms);
+        }
+        if(editedOrder.getOrderDetails().getCity() != "" ){
+            String city = editedOrder.getOrderDetails().getCity();
+            order.getOrderDetails().setCity(city);
+        }
+
+        orderServices.save(order);
+
+        return "redirect:/manager";
+    }
+
+    @RequestMapping("/order/saveOrderInArchive")
+    public String saveOrderInArchive(@RequestParam("orderId") Long orderId, Principal principal) {
+
+        orderServices.saveOrderInArchive(orderId,principal.getName());
+
+        return "redirect:/manager";
+    }
+
     @RequestMapping("/order/createCompletedOrder")
     public String createCompletedOrder(@RequestParam("orderId") int orderId, Principal principal, Model model) {
         Order order = orderServices.getOrderById(orderId);
@@ -176,7 +251,7 @@ public class ControllerTTS {
     }
 
     @RequestMapping("/profile")
-    public java.lang.String profileUser(Model model, Principal principal) {
+    public String profileUser(Model model, Principal principal) {
         User user = userServices.getUserByLoginName(principal.getName());
         List<Order> orders = user.getOrders();
         int countOrders = orders.size();

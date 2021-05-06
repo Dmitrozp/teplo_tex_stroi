@@ -1,10 +1,15 @@
 package com.silver_ads.teplo_tex_stroi.entity;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Objects;
 
-@Data
+@Setter
+@Getter
+@NoArgsConstructor
 @Entity
 @Table(name = "user_details")
 public class UserDetails {
@@ -32,8 +37,16 @@ public class UserDetails {
     @Column(name = "balance")
     private Integer balance;
 
-    @OneToOne(cascade = CascadeType.ALL,
-            mappedBy = "userDetails")
-    private User user;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserDetails that = (UserDetails) o;
+        return Objects.equals(name, that.name) && Objects.equals(lastName, that.lastName) && Objects.equals(city, that.city) && Objects.equals(description, that.description) && phoneNumber.equals(that.phoneNumber) && Objects.equals(maxCountOrders, that.maxCountOrders) && Objects.equals(currentCountOrders, that.currentCountOrders) && Objects.equals(maxCountCanceledOrders, that.maxCountCanceledOrders) && Objects.equals(currentCanceledCountOrders, that.currentCanceledCountOrders) && Objects.equals(balance, that.balance);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, lastName, city, phoneNumber);
+    }
 }

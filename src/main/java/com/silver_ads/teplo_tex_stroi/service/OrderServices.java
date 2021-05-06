@@ -25,8 +25,6 @@ public interface OrderServices {
 
     Order addOrderToUser(Order order, User user);
 
-    Order createOrder(OrderDetails orderDetailsExternal);
-
     Order createNewOrderFromFormSite(OrderDetails orderDetailsExternal);
 
     List<Order> getOrdersForManagerByStatusAndManagerLoginName(String orderStatus, User user);
@@ -34,5 +32,7 @@ public interface OrderServices {
     void saveCompletedOrder(Order orderWithChanges, User user);
 
     void saveCanceledOrder(Report report, String loginName);
+
+    void saveOrderInArchive(Long orderId, String loginName);
 
 }

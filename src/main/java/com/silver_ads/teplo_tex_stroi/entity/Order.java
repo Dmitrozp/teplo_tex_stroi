@@ -1,15 +1,18 @@
 package com.silver_ads.teplo_tex_stroi.entity;
 
-import lombok.Data;
-import org.springframework.stereotype.Component;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-@Component
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -40,16 +43,6 @@ public class Order {
             mappedBy = "order")
     private List<Report> reports;
 
-    public Order() {
-    }
-
-    public static Order createOrderWithDateCreated(OrderDetails orderDetails) {
-        Order order = new Order();
-        order.setOrderDetails(orderDetails);
-        order.setDate(LocalDateTime.now());
-        return order;
-    }
-
     public void addReport(Report report) {
         if (reports == null) {
             this.reports = new ArrayList<>();
@@ -57,6 +50,19 @@ public class Order {
         }
         reports.add(report);
         report.setOrder(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Order order = (Order) o;
+        return date.equals(order.date) && userCreator.equals(order.userCreator) && Objects.equals(statusOrder, order.statusOrder) && Objects.equals(sumPayment, order.sumPayment) && Objects.equals(statusPayment, order.statusPayment) && Objects.equals(userExecutor, order.userExecutor);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(date, userCreator);
     }
 }
 

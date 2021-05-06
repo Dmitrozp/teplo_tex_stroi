@@ -64,7 +64,7 @@ public class OrderServicesImpl implements OrderServices {
         order.setStatusOrder(OrderStatus.COMPLETED.name());
         Report report = new Report();
         report.setOrder(order);
-        report.setDate(LocalDateTime.now());
+        report.setDate(changeTimeIfNullSeconds(LocalDateTime.now()));
         report.setDescription("ВЫПОЛНЕНA! исполнителем логин " + user.getLoginName()
                 + " Имя: " + user.getUserDetails().getName() + " Заявка ID: " + order.getId()
                 + " Площадь утепления: " + order.getOrderDetails().getSquareAreaFromReport()
@@ -84,7 +84,7 @@ public class OrderServicesImpl implements OrderServices {
         report.setDescription("ОТМЕНА! исполнителем логин " + user.getLoginName()
                 + " Имя: " + user.getUserDetails().getName() + " Заявка ID: " + order.getId()
                 + " Причина отмены : " + report.getDescription());
-        report.setDate(LocalDateTime.now());
+        report.setDate(changeTimeIfNullSeconds(LocalDateTime.now()));
         report.setUserCreator(user);
         order.addReport(report);
         order.setStatusOrder(OrderStatus.CANCELED.name());
@@ -93,6 +93,23 @@ public class OrderServicesImpl implements OrderServices {
         int currentCanceledCountOrders = user.getUserDetails().getCurrentCanceledCountOrders();
         user.getUserDetails().setCurrentCanceledCountOrders(currentCanceledCountOrders + NEW_CANCELED_ORDER );
         userServices.save(user);
+    }
+
+    @Override
+    public void saveOrderInArchive(Long orderId, String loginName){
+        Order order = getOrderById(orderId);
+        User user = userServices.getUserByLoginName(loginName);
+        Report report = new Report();
+        report.setDescription("ОТМЕНА! исполнителем логин " + user.getLoginName()
+                + " Имя: " + user.getUserDetails().getName() + " Заявка ID: " + order.getId());
+        report.setDate(changeTimeIfNullSeconds(LocalDateTime.now()));
+        report.setUserCreator(user);
+
+        order.setStatusOrder(OrderStatus.IN_ARCHIVE.name());
+        order.setUserExecutor(null);
+        order.addReport(report);
+
+        orderRepository.save(order);
     }
 
     @Override
@@ -127,7 +144,7 @@ public class OrderServicesImpl implements OrderServices {
     @Override
     public void save(Order order) {
         if (order.getDate() == null) {
-            order.setDate(LocalDateTime.now());
+            order.setDate(changeTimeIfNullSeconds(LocalDateTime.now()));
         }
         orderRepository.save(order);
     }
@@ -154,33 +171,18 @@ public class OrderServicesImpl implements OrderServices {
     }
 
     @Override
-    public Order createOrder(OrderDetails orderDetailsExternal) {
-        OrderDetails orderDetails = new OrderDetails();
-        orderDetails.copy(orderDetailsExternal);
-        Order order = new Order();
-        order.setUserCreator("admin"); //TODO создатель заявки, заявки приходит с сайта
-        order.setDate(LocalDateTime.now());
-        order.setStatusOrder(OrderStatus.NEW_ORDER_NOT_VERIFIED.name());
-        order.setStatusPayment(PaymentStatus.UNKNOWN.name());
-        order.setOrderDetails(orderDetails);
-        orderDetails.setOrder(order);
-        orderRepository.save(order);
-        return order;
-    }
-
-    @Override
     public Order createNewOrderFromFormSite(OrderDetails orderDetailsExternal) {
         Order order = new Order();
+        order.setDate(changeTimeIfNullSeconds(LocalDateTime.now()));
         order.setUserCreator("admin"); //TODO создатель заявки, заявки приходит с сайта
-        order.setDate(LocalDateTime.now());
         order.setStatusOrder(OrderStatus.NEW_ORDER_NOT_VERIFIED.name());
         order.setStatusPayment(PaymentStatus.UNKNOWN.name());
         order.setOrderDetails(orderDetailsExternal);
         order.getOrderDetails().setTypeOrder(OrderType.PROSCHET_NA_UTEPLENIE.name());
         order.getOrderDetails().setSourceOrder(OrderSource.FORM_SITE_SILVER_ADS_COM.name());
-        order.setUserExecutor(userServices.findManagerWhoCanAcceptOrder());
+        //order.setUserExecutor(userServices.findManagerWhoCanAcceptOrder());
         save(order);
-        order.setUserExecutor(null);
+        //order.setUserExecutor(null);
         return order;
     }
 
@@ -195,6 +197,13 @@ public class OrderServicesImpl implements OrderServices {
             resultPhoneNumber = phoneNumberWithoutLastNumbers + hideSymbols;
         }
         return resultPhoneNumber;
+    }
+
+    private LocalDateTime changeTimeIfNullSeconds(LocalDateTime localDateTime){
+        if (localDateTime.getSecond() == 00){
+            localDateTime.plusSeconds(3);
+            return localDateTime;
+        } else { return localDateTime;}
     }
 
 

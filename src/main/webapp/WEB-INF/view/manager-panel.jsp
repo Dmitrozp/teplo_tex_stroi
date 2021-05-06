@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -20,6 +21,11 @@
                 <p align="right">Привет  ${user.userDetails.name} ${user.userDetails.lastName} Ваш город: ${user.userDetails.city} </p>
                 <p align="right">Логин: ${user.loginName}</p>
                 <p align="right">Баланс: ${user.userDetails.balance} грн</p>
+                <security:authorize access="hasAnyRole('USER', 'ADMIN', 'SUPER_MANAGER')">
+                    <form  align="right" method="LINK" action="/profile">
+                        <input type="submit" value="<< Кабинет с моими заявками >>" style="width: 250px; height: 30px;">
+                    </form>
+                </security:authorize>
             </font>
         </th>
     </tr>
@@ -49,6 +55,14 @@
                 <c:param name="orderId" value="${newOrders.id}"/>
             </c:url>
 
+            <c:url var="editOrder" value="/order/edit" >
+                <c:param name="orderId" value="${newOrders.id}"/>
+            </c:url>
+
+            <c:url var="addOrder" value="/order/addOrder" >
+                <c:param name="orderId" value="${newOrders.id}"/>
+            </c:url>
+
             <tr col style="background-color:LightCyan" align="center">
                 <td>
                     <fmt:parseDate value="${newOrders.date}" pattern="yyyy-MM-dd'T'HH:mm:ss"
@@ -66,8 +80,32 @@
                 <td>${newOrders.orderDetails.squareArea}</td>
                 <td align="left">${newOrders.orderDetails.notes}</td>
                 <td col style="background-color:white" align="center">
-                    <input type="button" value="Отправить заявку в работу"
-                           onclick = "window.location.href = '${sendOrderInWork}'"/>
+                    <table>
+                        <tr>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <br>
+                                <security:authorize access="hasAnyRole('MANAGER', 'ADMIN')">
+                                <input type="button" value="Отправить заявку в работу"
+                                       onclick = "window.location.href = '${sendOrderInWork}'"/>
+                                </security:authorize>
+                                <p></p>
+                                <security:authorize access="hasAnyRole('MANAGER', 'ADMIN')">
+                                <input type="button" value="<<   Редактировать   >>"
+                                       onclick = "window.location.href = '${editOrder}'"/>
+                                </security:authorize>
+                                <p></p>
+                                <security:authorize access="hasAnyRole('SUPER_MANAGER', 'ADMIN')">
+                                <input type="button" value="<<   Взять заявку   >>"
+                                       onclick = "window.location.href = '${addOrder}'"/>
+                                </security:authorize>
+                                <br>
+                                <p> </p>
+                            </td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
         </c:forEach>
@@ -99,9 +137,14 @@
 
         <c:forEach var="canceledOrders" items="${canceledOrders}" >
 
-            <c:url var="sendOrderInWork" value="/manager/sendOrderInWork" >
+            <c:url var="saveOrderInArchive" value="/order/saveOrderInArchive" >
                 <c:param name="orderId" value="${canceledOrders.id}"/>
             </c:url>
+
+            <c:url var="createReport" value="/order/createReport" >
+                <c:param name="orderId" value="${canceledOrders.id}"/>
+            </c:url>
+
 
             <tr col style="background-color:LightCyan" align="center">
                 <td>
@@ -140,8 +183,14 @@
                     </table>
                 </td>
                 <td col style="background-color:white" align="center">
-                    <input type="button" value="Отправить заявку в работу"
-                           onclick = "window.location.href = '${sendOrderInWork}'"/>
+
+                    <input type="button" value="<< Оставить отчет >>" style="width:150px"
+                           onclick = "window.location.href = '${createReport}'"/>
+                    <p></p>
+
+                    <input type="button" value="<<  Забыть  >>"
+                           onclick = "window.location.href = '${saveOrderInArchive}'"/>
+
                 </td>
             </tr>
         </c:forEach>

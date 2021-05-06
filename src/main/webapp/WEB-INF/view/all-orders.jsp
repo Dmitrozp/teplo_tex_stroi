@@ -24,14 +24,14 @@
                 <p align="right">Макс. отмен заявок : <b style="color: #ff0000">${user.userDetails.maxCountCanceledOrders} </b>
                     Отмененных заявок : <b style="color: #ff0000">${user.userDetails.currentCanceledCountOrders}</b></p>
 
-                <security:authorize access="hasAnyRole('ADMIN', 'MANAGER')">
+                <security:authorize access="hasAnyRole('ADMIN', 'MANAGER', 'SUPER_MANAGER')">
                 <form  align="right" method="LINK" action="/manager">
-                    <input type="submit" value="<< Панель для менеджера >>" style="width: 250px; height: 30px;">
+                    <input type="submit" value="<< Кабинет для менеджера >>" style="width: 250px; height: 30px;">
                 </form>
                 </security:authorize>
-<security:authorize access="hasAnyRole('USER', 'ADMIN')">
+<security:authorize access="hasAnyRole('USER', 'ADMIN','SUPER_USER')">
                 <form  align="right" method="LINK" action="/profile">
-                    <input type="submit" value="<< Войти в личный кабинет >>" style="width: 250px; height: 30px;">
+                    <input type="submit" value="<< Кабинет с моими заявками >>" style="width: 250px; height: 30px;">
                 </form>
 </security:authorize>
             </font>
@@ -53,7 +53,6 @@
         <th>Город</th>
         <th>Телефон</th>
         <th>Площадь утепления</th>
-        <th>Примечание</th>
         <th col style="background-color:white" align="center"></th>
     </tr>
 
@@ -78,7 +77,6 @@
             <td>${orders.orderDetails.city}</td>
             <td>${orders.orderDetails.phoneNumber}</td>
             <td>${orders.orderDetails.squareArea}</td>
-            <td>${orders.orderDetails.notes}</td>
             <td col style="background-color:white" align="center">
                 <input type="button" value="Взять заявку"
                 onclick = "window.location.href = '${addOrder}'"/>

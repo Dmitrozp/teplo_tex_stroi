@@ -1,10 +1,15 @@
 package com.silver_ads.teplo_tex_stroi.entity;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "order_details")
 public class OrderDetails {
@@ -33,10 +38,6 @@ public class OrderDetails {
     private String sourceOrder;
     @Column(name = "type_order")
     private String typeOrder;
-
-    @OneToOne(cascade = CascadeType.ALL,
-            mappedBy = "orderDetails", fetch = FetchType.EAGER)
-    private Order order;
 
     public void copy(OrderDetails orderDetailsExternal) {
         this.customerName = orderDetailsExternal.customerName;
