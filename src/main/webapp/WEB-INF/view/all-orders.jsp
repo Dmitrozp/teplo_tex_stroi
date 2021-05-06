@@ -39,7 +39,7 @@
     </tr>
 </table>
 <br>
-<font size="7" face="Courier New" >Заявки на утепление квартир и домов по Украине</font>
+<font size="6" face="Courier New" >Заявки на утепление квартир и домов по Украине</font>
 <br>
 <br>
 <font size="4" face="Courier New" >
@@ -85,5 +85,56 @@
     </c:forEach>
 </table>
 </font>
+<security:authorize access="hasAnyRole('SUPER_USER')">
+<font size="6" face="Courier New" >Заявки которые не попали еще в общий список, который видят все </font>
+<br>
+<br>
+<font size="4" face="Courier New" >
+
+    <table width="100%">
+        <tr col span="2" style="background:Khaki" align="center">
+            <th>Дата заявки</th>
+            <th>Имя заказчика</th>
+            <th>Адрес</th>
+            <th>Количество комнат</th>
+            <th>Город</th>
+            <th>Телефон</th>
+            <th>Площадь утепления</th>
+            <th>Примечание</th>
+            <th col style="background-color:white" align="center"></th>
+        </tr>
+
+        <c:forEach var="ordersNotVerified" items="${ordersNotVerified}" >
+
+            <c:url var="addOrderNotVerified" value="/order/addOrder" >
+                <c:param name="orderId" value="${ordersNotVerified.id}"/>
+            </c:url>
+
+            <tr col style="background-color:LightCyan" align="center">
+                <td>
+                    <fmt:parseDate value="${ordersNotVerified.date}" pattern="yyyy-MM-dd'T'HH:mm:ss"
+                                   var="parsedDateTime" type="both" />
+
+                    <fmt:formatDate value="${parsedDateTime}" pattern="dd.MM.yyyy" />
+                    <br>
+                    <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm" />
+                </td>
+                <td>${ordersNotVerified.orderDetails.customerName}</td>
+                <td>${ordersNotVerified.orderDetails.address}</td>
+                <td>${ordersNotVerified.orderDetails.countRooms}</td>
+                <td>${ordersNotVerified.orderDetails.city}</td>
+                <td>${ordersNotVerified.orderDetails.phoneNumber}</td>
+                <td>${ordersNotVerified.orderDetails.squareArea}</td>
+                <td>${ordersNotVerified.orderDetails.notes}</td>
+
+                <td col style="background-color:white" align="center">
+                    <input type="button" value="Взять заявку"
+                           onclick = "window.location.href = '${addOrderNotVerified}'"/>
+                </td>
+            </tr>
+        </c:forEach>
+    </table>
+</font>
+</security:authorize>
 </body>
 </html>

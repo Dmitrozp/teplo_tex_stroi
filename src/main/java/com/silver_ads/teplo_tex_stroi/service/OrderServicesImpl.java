@@ -162,7 +162,8 @@ public class OrderServicesImpl implements OrderServices {
 
     @Override
     public Order addOrderToUser(Order order, User user) {
-        if (order.getStatusOrder().equals(OrderStatus.NEW_ORDER_VERIFIED.name())) {
+        if (order.getStatusOrder().equals(OrderStatus.NEW_ORDER_VERIFIED.name())
+                || order.getStatusOrder().equals(OrderStatus.NEW_ORDER_NOT_VERIFIED.name())) {
             order.setUserExecutor(user);
             order.setStatusOrder(OrderStatus.IN_WORK.name());
             orderRepository.save(order);

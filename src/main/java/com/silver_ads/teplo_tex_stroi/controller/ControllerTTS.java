@@ -41,11 +41,13 @@ public class ControllerTTS {
     public String showAllOrders(Model model, Principal principal) {
         User user = userServices.getUserByLoginName(principal.getName());
         List<Order> orders = orderServices.getOrdersWithHidePhoneAndStatusOrder(OrderStatus.NEW_ORDER_VERIFIED.name());
+        List<Order> ordersNotVerified = new ArrayList<>();
         if(user.getRoles().stream().filter(role -> role.getName().equals("ROLE_SUPER_USER")).count() == 1L)
         {
-            orders.addAll(orderServices.getOrdersWithHidePhoneAndStatusOrder(OrderStatus.NEW_ORDER_NOT_VERIFIED.name()));
+            ordersNotVerified = orderServices.getOrdersWithHidePhoneAndStatusOrder(OrderStatus.NEW_ORDER_NOT_VERIFIED.name());
         }
         model.addAttribute("orders", orders);
+        model.addAttribute("ordersNotVerified", ordersNotVerified);
         model.addAttribute("user", user);
         model.addAttribute("countOrders", user.getOrders().size());
 

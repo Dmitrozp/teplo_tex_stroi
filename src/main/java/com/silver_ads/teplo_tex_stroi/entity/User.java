@@ -1,5 +1,6 @@
 package com.silver_ads.teplo_tex_stroi.entity;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
+@Data
 @Entity
 @Table(name = "users")
 public class User {
