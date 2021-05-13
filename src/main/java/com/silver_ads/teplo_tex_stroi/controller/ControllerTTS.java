@@ -2,13 +2,11 @@ package com.silver_ads.teplo_tex_stroi.controller;
 
 import com.silver_ads.teplo_tex_stroi.entity.Order;
 import com.silver_ads.teplo_tex_stroi.entity.Report;
-import com.silver_ads.teplo_tex_stroi.entity.Role;
 import com.silver_ads.teplo_tex_stroi.entity.User;
 import com.silver_ads.teplo_tex_stroi.enums.order.OrderStatus;
-import com.silver_ads.teplo_tex_stroi.service.OrderServices;
-import com.silver_ads.teplo_tex_stroi.service.ReportServices;
-import com.silver_ads.teplo_tex_stroi.service.UserServices;
+import com.silver_ads.teplo_tex_stroi.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,22 +18,25 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Controller
-public class ControllerTTS {
+public class ControllerTTS implements ErrorController {
     @Autowired
-    OrderServices orderServices;
+    OrderServicesImpl orderServices;
     @Autowired
-    UserServices userServices;
+    UserServicesImpl userServices;
     @Autowired
-    ReportServices reportServices;
+    ReportServicesImpl reportServices;
 
     @RequestMapping("/")
-    public String showAllOrdersWithHidePhoneNumber(Model model) {
+    public String showAllOrdersWithHidePhoneNumber(Model model) throws Exception {
         List<Order> orders = orderServices.getOrdersWithHidePhoneAndStatusOrder(OrderStatus.NEW_ORDER_VERIFIED.name());
         model.addAttribute("orders", orders);
         return "home-page";
     }
+
+
 
     @RequestMapping("/order")
     public String showAllOrders(Model model, Principal principal) {
@@ -52,6 +53,17 @@ public class ControllerTTS {
         model.addAttribute("countOrders", user.getOrders().size());
 
         return "all-orders";
+    }
+
+    @RequestMapping("/order/createNewOrder")
+    public String createNewOrder(Model model, Principal principal) {
+        User user = userServices.getUserByLoginName(principal.getName());
+        Order order = new Order();
+        order.setUserCreator(user.getLoginName());
+
+        model.addAttribute("order", order);
+
+        return "create-edit-order";
     }
 
     @RequestMapping("/order/addOrder")
@@ -117,24 +129,31 @@ public class ControllerTTS {
 
 
     @RequestMapping("/order/createReport")
-    public String createReport(@RequestParam("orderId") int orderId, Principal principal, Model model) {
-        Order order = orderServices.getOrderById(orderId);
-        User user = userServices.getUserByLoginName(principal.getName());
+    public String createReport(@RequestParam("orderId") Long orderId, Principal principal, Model model) {
+//        Order order = orderServices.getOrderById(orderId);
+//        User user = userServices.getUserByLoginName(principal.getName());
         Report report = new Report();
-        report.setOrder(order);
-        report.setUserCreator(user);
-        reportServices.saveReport(report);
-
+        report.setOrder(new Order());
+        report.getOrder().setId(orderId);
+//        report.setOrder(order);
+//        report.setUserCreator(user);
+//        reportServices.saveReport(report);
         model.addAttribute("report", report);
 
         return "create-report";
     }
 
     @RequestMapping("/order/saveReport")
-    public String saveReport(@ModelAttribute("report") Report report, Principal principal) {
+    public String saveReport(@ModelAttribute("report") Report report, Principal principal) throws Exception {
+        final int MIN_COUNT_OF_SUMBOLS_IN_DESCRIPTION = 10;
+
+        if (report.getDescription().length() < MIN_COUNT_OF_SUMBOLS_IN_DESCRIPTION) {throw new Exception("В отчете должно быть минимум 10 символов и отчет не может быть пустым");}
         User user = userServices.getUserByLoginName(principal.getName());
-        Report reportResult = reportServices.findReportById(report.getId());
+        Order order = orderServices.getOrderById(report.getOrder().getId());
+        Report reportResult = new Report();
+        reportResult.setOrder(order);
         reportResult.setDescription(report.getDescription());
+        report.setUserCreator(user);
         reportServices.saveReport(reportResult);
 
         AtomicReference<String> url = new AtomicReference<>();
@@ -164,14 +183,19 @@ public class ControllerTTS {
             model.addAttribute("user", user);
             model.addAttribute("report", report);
         } else {
-            throw new Exception("You have many canceled orders");
+            throw new Exception("У Вас привышен лимин отменненных заявок! Max = " + user.getUserDetails().getMaxCountCanceledOrders()
+                    + "в данный момент " + user.getUserDetails().getCurrentCanceledCountOrders() + "/n"
+                    + "За увеличение лимита, обратитесь в поддержку, по тел. 097 870 63 63");
         }
 
         return "canceled-order";
     }
 
     @RequestMapping("/order/saveCanceledOrder")
-    public String saveCanceledOrder(@ModelAttribute("report") Report report, Principal principal) {
+    public String saveCanceledOrder(@ModelAttribute("report") Report report, Principal principal) throws Exception {
+        if(report.getDescription().length() < 10 ){
+            throw new Exception("Описание не может быть пустым, или меньше 10 букв. Добавьте пожалуйста описание к отменненной заявке ");
+        }
         orderServices.saveCanceledOrder(report,principal.getName());
 
         return "redirect:/profile";
@@ -184,7 +208,7 @@ public class ControllerTTS {
 
         model.addAttribute("order", order);
 
-        return "edit-order";
+        return "create-edit-order";
     }
 
     @RequestMapping("/order/saveEditedOrder")
@@ -245,7 +269,10 @@ public class ControllerTTS {
     }
 
     @RequestMapping("/order/saveCompletedOrder")
-    public String saveCompletedOrder(@ModelAttribute("order") Order orderWithChanges, Principal principal) {
+    public String saveCompletedOrder(@ModelAttribute("order") Order orderWithChanges, Principal principal) throws Exception {
+        if (orderWithChanges.getOrderDetails().getSumOfPaymentCustomer() == null || orderWithChanges.getOrderDetails().getSquareAreaFromReport() == null){
+            throw new Exception("Поля \"площадь утепления\" и \"сумма оплаты клиентом\" не могут быть пустые! Пожалуйста введите данные. ");
+        }
         User user = userServices.getUserByLoginName(principal.getName());
         orderServices.saveCompletedOrder(orderWithChanges, user);
 
@@ -256,11 +283,16 @@ public class ControllerTTS {
     public String profileUser(Model model, Principal principal) {
         User user = userServices.getUserByLoginName(principal.getName());
         List<Order> orders = user.getOrders();
-        int countOrders = orders.size();
+        List<Order> ordersInWork = orders.stream().filter(order -> order.getStatusOrder().equals(OrderStatus.IN_WORK.name())).collect(Collectors.toList());
+        int countOrdersInWork = ordersInWork.size();
+        List<Order> ordersInArchive = orders.stream().filter(order -> !order.getStatusOrder().equals(OrderStatus.IN_WORK.name())).collect(Collectors.toList());
+        int countOrdersInArchive = ordersInArchive.size();
 
-        model.addAttribute("orders", orders);
+        model.addAttribute("ordersInWork", ordersInWork);
+        model.addAttribute("countOrdersInWork", countOrdersInWork);
+        model.addAttribute("ordersInArchive", ordersInArchive);
+        model.addAttribute("countOrdersInArchive", countOrdersInArchive);
         model.addAttribute("user", user);
-        model.addAttribute("countOrders", countOrders);
 
         return "user-panel";
     }
@@ -272,4 +304,19 @@ public class ControllerTTS {
         model.addAttribute("allOrders", orders);
         return "all-orders";
     }
+
+    @Override
+    public String getErrorPath() {
+        return "error";
+    }
+
+    @ExceptionHandler()
+    @RequestMapping("/error")
+    public String error(Exception e, Model model){
+
+        model.addAttribute("message", e.getMessage());
+
+        return "error";
+    }
+
 }

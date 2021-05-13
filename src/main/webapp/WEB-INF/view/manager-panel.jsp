@@ -7,12 +7,12 @@
     <title>Панель управления заявками для менеджера</title>
 </head>
 <body>
-<table border="0">
+<table border="0" width="100%">
     <tr>
         <th align="left">
-            <img width=100% src="${pageContext.request.contextPath}/img/logo1.jpg"/>
+            <img src="${pageContext.request.contextPath}/img/logo1.jpg"/>
         </th>
-        <th width="50%">
+        <th>
             <font size="4" face="Courier New" >
                 <form  align="right" method="LINK" action="/logout">
                     <input type="submit" value="<< Выйти >>" style="width: 250px; height: 30px;">
@@ -21,10 +21,17 @@
                 <p align="right">Привет  ${user.userDetails.name} ${user.userDetails.lastName} Ваш город: ${user.userDetails.city} </p>
                 <p align="right">Логин: ${user.loginName}</p>
                 <p align="right">Баланс: ${user.userDetails.balance} грн</p>
-                <security:authorize access="hasAnyRole('USER', 'ADMIN', 'SUPER_MANAGER')">
+                <security:authorize access="hasAnyRole('ADMIN', 'MANAGER', 'SUPER_MANAGER')">
                     <form  align="right" method="LINK" action="/profile">
                         <input type="submit" value="<< Кабинет с моими заявками >>" style="width: 250px; height: 30px;">
                     </form>
+                    <form  align="right" method="LINK" action="/order">
+                        <input type="submit" value="<< На главную >>" style="width: 250px; height: 30px;">
+                    </form>
+                    <form  align="right" method="LINK" action="/order/createNewOrder">
+                        <input type="submit" value="<< Создать новую заявку >>" style="width: 250px; height: 30px;">
+                    </form>
+
                 </security:authorize>
             </font>
         </th>
@@ -87,12 +94,12 @@
                         <tr>
                             <td>
                                 <br>
-                                <security:authorize access="hasAnyRole('MANAGER', 'ADMIN')">
+                                <security:authorize access="hasAnyRole('SUPER_MANAGER', 'MANAGER', 'ADMIN')">
                                 <input type="button" value="Отправить заявку в работу"
                                        onclick = "window.location.href = '${sendOrderInWork}'"/>
                                 </security:authorize>
                                 <p></p>
-                                <security:authorize access="hasAnyRole('MANAGER', 'ADMIN')">
+                                <security:authorize access="hasAnyRole('SUPER_MANAGER','MANAGER', 'ADMIN')">
                                 <input type="button" value="<<   Редактировать   >>"
                                        onclick = "window.location.href = '${editOrder}'"/>
                                 </security:authorize>

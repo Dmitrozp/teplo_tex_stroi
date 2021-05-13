@@ -6,12 +6,12 @@
     <title>Title</title>
 </head>
 <body>
-<table border="0">
+<table border="0" width="100%">
     <tr>
         <th align="left">
-            <img width=100% src="${pageContext.request.contextPath}/img/logo1.jpg"/>
+            <img src="${pageContext.request.contextPath}/img/logo1.jpg"/>
         </th>
-        <th width="50%">
+        <th>
             <font size="5" face="Courier New" >
                 <p align="right"> Привет: гость </p>
                 <form method="LINK" action="/order" align="right">

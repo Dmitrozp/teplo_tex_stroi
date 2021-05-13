@@ -30,6 +30,9 @@ public class Order {
     @Column(name = "status_payment")
     private String statusPayment;
 
+    @Column(name = "user_verifier")
+    private String verifier;
+
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "id_details")
     private OrderDetails orderDetails;

@@ -5,12 +5,12 @@
 <!DOCTYPE html>
 <html>
 <body>
-<table border="0">
+<table border="0" width="100%">
     <tr>
         <th align="left">
-            <img width=100% src="${pageContext.request.contextPath}/img/logo1.jpg"/>
+            <img src="${pageContext.request.contextPath}/img/logo1.jpg"/>
         </th>
-        <th width="50%">
+        <th>
             <form  align="right" method="LINK" action="/logout">
                 <input type="submit" value="<< Выйти >>" style="width: 250px; height: 30px;">
             </form>
@@ -23,6 +23,8 @@
                     Заявок в работе: <b style="color: #ff0000">${countOrders}</b></p>
                 <p align="right">Макс. отмен заявок : <b style="color: #ff0000">${user.userDetails.maxCountCanceledOrders} </b>
                     Отмененных заявок : <b style="color: #ff0000">${user.userDetails.currentCanceledCountOrders}</b></p>
+                <p align="right">Выполненные заявки : <b style="color: #1aff00">${user.userDetails.currentComplededCountOrders} </b>
+                </p>
 
                 <security:authorize access="hasAnyRole('ADMIN', 'MANAGER', 'SUPER_MANAGER')">
                 <form  align="right" method="LINK" action="/manager">

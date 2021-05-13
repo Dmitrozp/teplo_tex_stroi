@@ -23,6 +23,8 @@ public class User {
     private String password;
     @Column(name = "user_status")
     private String userStatus;
+    @Column(name = "enabled_login")
+    private boolean enabled = true;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "id_details")

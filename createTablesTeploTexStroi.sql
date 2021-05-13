@@ -20,6 +20,7 @@ CREATE TABLE silverads.orders (
                                   date_insert timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                                   user_creator varchar(255) DEFAULT NULL,
                                   user_executor varchar(255) DEFAULT NULL,
+                                  user_verifier varchar(255) DEFAULT NULL,
                                   status_order varchar(255) DEFAULT NULL,
                                   sum_payment int8 DEFAULT '0',
                                   status_payment varchar(255) DEFAULT NULL,
@@ -35,10 +36,11 @@ CREATE TABLE silverads.user_details (
                                         city varchar(25),
                                         description varchar(25),
                                         phone_number varchar(25),
-                                        max_count_orders int8 DEFAULT 3,
-                                        current_count_orders int8 DEFAULT 0,
-                                        max_count_canceled_orders int8 DEFAULT 3,
-                                        current_canceled_count_orders int8 DEFAULT 0,
+                                        max_orders int8 DEFAULT 3,
+                                        current_orders int8 DEFAULT 0,
+                                        max_canceled_orders int8 DEFAULT 3,
+                                        current_canceled_orders int8 DEFAULT 0,
+                                        current_compleded_orders int8 DEFAULT 0,
                                         balance int8 DEFAULT 0,
                                         PRIMARY KEY (id)
 ) ;
@@ -47,6 +49,7 @@ CREATE TABLE silverads.users (
                                  password varchar(255),
                                  user_status varchar(25),
                                  id_details int8 NOT NULL,
+                                 enabled_login boolean DEFAULT TRUE,
                                  PRIMARY KEY (login_name),
                                  FOREIGN KEY (id_details) REFERENCES user_details (id)
 );

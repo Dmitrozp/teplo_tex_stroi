@@ -12,7 +12,6 @@ import com.silver_ads.teplo_tex_stroi.repository.OrderRepository;
 import com.silver_ads.teplo_tex_stroi.entity.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,7 +38,7 @@ public class OrderServicesImpl implements OrderServices {
 
     @Override
     public List<Order> getOrdersForManagerByStatusAndManagerLoginName(String orderStatus, User user) {
-        List<Order> orders = orderRepository.findOrderByStatusOrderAndUserExecutor(orderStatus, user);
+        List<Order> orders = orderRepository.findOrderByStatusOrderAndVerifier(orderStatus, user.getLoginName());
         return orders;
     }
 
@@ -57,6 +56,7 @@ public class OrderServicesImpl implements OrderServices {
 
     @Override
     public void saveCompletedOrder(Order orderWithChanges, User user){
+        final Integer NEW_COMPLETED_ORDER =1;
         Order order = getOrderById(orderWithChanges.getId());
         order.getOrderDetails().setSquareAreaFromReport(orderWithChanges.getOrderDetails().getSquareAreaFromReport());
         order.getOrderDetails().setSumOfPaymentCustomer(orderWithChanges.getOrderDetails().getSumOfPaymentCustomer());
@@ -71,7 +71,9 @@ public class OrderServicesImpl implements OrderServices {
                 + " Сумма оплаты клиентом: " + order.getOrderDetails().getSumOfPaymentCustomer());
         report.setUserCreator(user);
         order.addReport(report);
-        order.setUserExecutor(userServices.findManagerWhoCanAcceptOrder());
+        user.getUserDetails().setCurrentComplededCountOrders(user.getUserDetails().getCurrentComplededCountOrders()
+                + NEW_COMPLETED_ORDER);
+        order.setVerifier(userServices.findManagerWhoCanAcceptOrder().getLoginName());
         orderRepository.save(order);
     }
 
@@ -88,7 +90,8 @@ public class OrderServicesImpl implements OrderServices {
         report.setUserCreator(user);
         order.addReport(report);
         order.setStatusOrder(OrderStatus.CANCELED.name());
-        order.setUserExecutor(userServices.findManagerWhoCanAcceptOrder());
+        //order.setUserExecutor(userServices.findManagerWhoCanAcceptOrder());
+        order.setVerifier(userServices.findManagerWhoCanAcceptOrder().getLoginName());
         orderRepository.save(order);
         int currentCanceledCountOrders = user.getUserDetails().getCurrentCanceledCountOrders();
         user.getUserDetails().setCurrentCanceledCountOrders(currentCanceledCountOrders + NEW_CANCELED_ORDER );
@@ -106,7 +109,7 @@ public class OrderServicesImpl implements OrderServices {
         report.setUserCreator(user);
 
         order.setStatusOrder(OrderStatus.IN_ARCHIVE.name());
-        order.setUserExecutor(null);
+//        order.setUserExecutor(null);
         order.addReport(report);
 
         orderRepository.save(order);
@@ -179,8 +182,8 @@ public class OrderServicesImpl implements OrderServices {
         order.setStatusOrder(OrderStatus.NEW_ORDER_NOT_VERIFIED.name());
         order.setStatusPayment(PaymentStatus.UNKNOWN.name());
         order.setOrderDetails(orderDetailsExternal);
-        order.getOrderDetails().setTypeOrder(OrderType.PROSCHET_NA_UTEPLENIE.name());
-        order.getOrderDetails().setSourceOrder(OrderSource.FORM_SITE_SILVER_ADS_COM.name());
+//        order.getOrderDetails().setTypeOrder(OrderType.PROSCHET_NA_UTEPLENIE.name());
+//        order.getOrderDetails().setSourceOrder(OrderSource.FORM_SITE_SILVER_ADS_COM.name());
         //order.setUserExecutor(userServices.findManagerWhoCanAcceptOrder());
         save(order);
         //order.setUserExecutor(null);

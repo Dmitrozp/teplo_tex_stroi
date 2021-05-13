@@ -3,6 +3,14 @@
  <!DOCTYPE html>
 <html lang="en">
 <body>
-Something went wrong: ${status} ${error}
+Произошла ошибка! ${status} ${error}
+<br>
+${message}
+
+<br>
+${m}
+<br>
+<button type="button" name="back" onclick="history.back()">вернуться назад</button>
+
 </body>
 </html>

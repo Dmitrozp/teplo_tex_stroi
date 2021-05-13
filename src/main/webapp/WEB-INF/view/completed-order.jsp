@@ -24,10 +24,11 @@
 <form:form action="saveCompletedOrder" modelAttribute="order">
     <form:hidden path="id"/>
     <p><b>Введите площадь утепления :</b><br>
-    >><form:input type="text" size="20" path="orderDetails.squareAreaFromReport"/></p>
+    >><form:input type="number" size="20" path="orderDetails.squareAreaFromReport"/> * только цифры
+    </p>
 
     <p><b>Введите сумму оплаты клиентом :</b><br>
-    >><form:input type="text" size="20" path="orderDetails.sumOfPaymentCustomer"/>
+    >><form:input type="number" size="20" path="orderDetails.sumOfPaymentCustomer"/> * только цифры
     </p>
     <br>
     <p><input type="submit" value="<<  Сохранить  >>" /></p>

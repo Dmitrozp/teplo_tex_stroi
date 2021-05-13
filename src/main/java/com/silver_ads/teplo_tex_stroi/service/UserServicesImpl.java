@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,26 +45,29 @@ public class UserServicesImpl implements UserServices, UserDetailsService {
     public User findManagerWhoCanAcceptOrder(){
         User userManager = findManagerWithMinOrdersInWork();
         if (userManager == null){
-            userManager = findAdminWithMinOrdersInWork();
+            userManager = findSuperManagerWithMinOrdersInWork();
         }
         return userManager;
     }
 
     private User findManagerWithMinOrdersInWork() {
         List<User> userList = userRepository.findUsersByRoles(roleRepository.findRoleByName("ROLE_MANAGER"));
-        Optional<User> userWithMinOrders = userList.stream().min((user1, user2) -> user1.getOrders().size()-user2.getOrders().size());
-        if (userWithMinOrders.isEmpty()){
-            return userList.get(0);
+        if(!userList.isEmpty()) {
+            Optional<User> userWithMinOrders = userList.stream().min((user1, user2) -> user1.getOrders().size() - user2.getOrders().size());
+            return userWithMinOrders.get();
+        } else {
+            return null;
         }
-        return userWithMinOrders.get();
     }
 
-    private User findAdminWithMinOrdersInWork(){
-        List<User> userList = userRepository.findUsersByRoles(roleRepository.findRoleByName("ROLE_ADMIN"));
+    private User findSuperManagerWithMinOrdersInWork(){
+        List<User> userList = userRepository.findUsersByRoles(roleRepository.findRoleByName("ROLE_SUPER_MANAGER"));
+        if(!userList.isEmpty()) {
         Optional<User> userWithMinOrders = userList.stream().min((user1, user2) -> user1.getOrders().size()-user2.getOrders().size());
-
         return userWithMinOrders.get();
-
+        } else {
+            return userRepository.findUsersByRoles(roleRepository.findRoleByName("ROLE_ADMIN")).get(0);
+        }
     }
 
     @Override
@@ -85,7 +87,13 @@ public class UserServicesImpl implements UserServices, UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("Такой пользователь не найден");
         }
-        return new org.springframework.security.core.userdetails.User(user.getLoginName(), user.getPassword(), mapRolesToAuthority(user.getRoles()));
+        return new org.springframework.security.core.userdetails.User(user.getLoginName(),
+                user.getPassword(),
+                user.isEnabled(),
+                true,
+                true,
+                true,
+                mapRolesToAuthority(user.getRoles()));
     }
 
     private Collection<? extends GrantedAuthority> mapRolesToAuthority(Collection<Role> roles) {

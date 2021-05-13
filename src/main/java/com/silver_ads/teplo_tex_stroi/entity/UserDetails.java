@@ -26,14 +26,16 @@ public class UserDetails {
     private String description;
     @Column(name = "phone_number")
     private String phoneNumber;
-    @Column(name = "max_count_orders")
+    @Column(name = "max_orders")
     private Integer maxCountOrders;
-    @Column(name = "current_count_orders")
+    @Column(name = "current_orders")
     private Integer currentCountOrders;
-    @Column(name = "max_count_canceled_orders")
+    @Column(name = "max_canceled_orders")
     private Integer maxCountCanceledOrders;
-    @Column(name = "current_canceled_count_orders")
+    @Column(name = "current_canceled_orders")
     private Integer currentCanceledCountOrders;
+    @Column(name = "current_compleded_orders")
+    private Integer currentComplededCountOrders;
     @Column(name = "balance")
     private Integer balance;
 
