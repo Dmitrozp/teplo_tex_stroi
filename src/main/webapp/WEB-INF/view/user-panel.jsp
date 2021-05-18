@@ -17,7 +17,7 @@
                 <p align="right">Логин: ${user.loginName}</p>
                 <p align="right">Баланс: ${user.userDetails.balance} грн</p>
                 <p align="right">Макс. заявок: <b style="color: #ff3300">${user.userDetails.maxCountOrders} </b>
-                    Заявок в работе: <b style="color: #ff0000">${countOrders}</b></p>
+                    Заявок в работе: <b style="color: #ff0000">${user.userDetails.currentCountOrders}</b></p>
                 <p align="right">Макс. отмен заявок : <b style="color: #ff0000">${user.userDetails.maxCountCanceledOrders} </b>
                     Отмененных заявок : <b style="color: #ff0000">${user.userDetails.currentCanceledCountOrders}</b></p>
                 <p align="right">Выполненные заявки : <b style="color: #1aff00">${user.userDetails.currentComplededCountOrders} </b>

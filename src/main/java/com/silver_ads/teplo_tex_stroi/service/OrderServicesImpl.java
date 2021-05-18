@@ -43,6 +43,12 @@ public class OrderServicesImpl implements OrderServices {
     }
 
     @Override
+    public List<Order> getOrdersForManagerByStatus(String orderStatus) {
+    return orderRepository.findOrdersByStatusOrder(orderStatus);
+
+    }
+
+    @Override
     public List<Order> getOrdersWithHidePhoneAndUserNull() {
         List<Order> orders = orderRepository.findOrderByUserExecutorIsNull();
         orders.stream().map(order -> {

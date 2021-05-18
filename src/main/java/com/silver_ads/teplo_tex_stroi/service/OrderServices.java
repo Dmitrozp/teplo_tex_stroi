@@ -15,6 +15,8 @@ public interface OrderServices {
 
     Order getOrderById(long id);
 
+    List<Order> getOrdersForManagerByStatus(String orderStatus);
+
     List<Order> getOrdersWithHidePhoneAndUserNull();
 
     List<Order> getOrdersByUser(User user);

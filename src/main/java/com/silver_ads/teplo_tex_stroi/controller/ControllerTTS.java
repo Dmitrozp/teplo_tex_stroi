@@ -85,15 +85,11 @@ public class ControllerTTS implements ErrorController {
     public String showOrdersForManagersPanel(Model model, Principal principal) {
         User user = userServices.getUserByLoginName(principal.getName());
         List<Order> newOrders =
-                orderServices.getOrdersForManagerByStatusAndManagerLoginName(OrderStatus.NEW_ORDER_NOT_VERIFIED.name(), null);
+                orderServices.getOrdersForManagerByStatus(OrderStatus.NEW_ORDER_NOT_VERIFIED.name());
         List<Order> completedOrders =
                 orderServices.getOrdersForManagerByStatusAndManagerLoginName(OrderStatus.COMPLETED.name(), user);
         List<Order> canceledOrders =
                 orderServices.getOrdersForManagerByStatusAndManagerLoginName(OrderStatus.CANCELED.name(), user);
-
-//        if(user.getRoles().stream().equals(new Role("SUPER_MANAGER"))){
-//            orderServices.
-//        }
 
         int countNewOrders = newOrders.size();
         model.addAttribute("newOrders", newOrders);
