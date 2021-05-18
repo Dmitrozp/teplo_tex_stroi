@@ -1,14 +1,15 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Кабинет</title>
+    <title>Архив</title>
 </head>
 <body>
 <table border="0" width="100%">
     <tr>
-        <th align="left">
+        <th align="top">
             <img  src="${pageContext.request.contextPath}/img/logo1.jpg"/>
         </th>
         <th>
@@ -23,20 +24,16 @@
                 <p align="right">Выполненные заявки : <b style="color: #1aff00">${user.userDetails.currentComplededCountOrders} </b>
                 </p>
 
-                <form method="LINK" align="right" action="/order">
-                    <input  type="submit" value="<<  Взять заявку  >>" style="width: 150px; height: 30px;">
+                <form method="LINK" align="right" action="/profile">
+                    <input  type="submit" value="<<  Моя кабинет  >>" style="width: 150px; height: 30px;">
                 </form>
-                <form method="LINK" align="right" action="/order/archive">
-                <input  type="submit" value="<<  Архив заявок  >>" style="width: 150px; height: 30px;">
-                </form>
-
             </font>
         </th>
     </tr>
 </table>
 
 <br>
-<font size="7" face="Courier New" >Мои заявки на утепление в работе</font>
+<font size="7" face="Courier New" >Архив моих заявок</font>
 <br>
 <br>
 <font size="4" face="Courier New" >
@@ -53,56 +50,58 @@
             <th width="100">Отчеты</th>
         </tr>
 
-        <c:forEach var="ordersInWork" items="${ordersInWork}" >
+        <c:forEach var="ordersInArchive" items="${ordersInArchive}" >
 
             <c:url var="createReport" value="/order/createReport" >
-                <c:param name="orderId" value="${ordersInWork.id}"/>
+                <c:param name="orderId" value="${ordersInArchive.id}"/>
             </c:url>
             <c:url var="completedOrder" value="/order/createCompletedOrder" >
-                <c:param name="orderId" value="${ordersInWork.id}"/>
+                <c:param name="orderId" value="${ordersInArchive.id}"/>
             </c:url>
             <c:url var="canceledOrder" value="/order/createCanceledOrder" >
-                <c:param name="orderId" value="${ordersInWork.id}"/>
+                <c:param name="orderId" value="${ordersInArchive.id}"/>
             </c:url>
 
             <tr col style="background-color:LightCyan" align="center">
                 <td>
-                    <fmt:parseDate value="${ordersInWork.date}" pattern="yyyy-MM-dd'T'HH:mm:ss"
+                    <fmt:parseDate value="${ordersInArchive.date}" pattern="yyyy-MM-dd'T'HH:mm:ss"
                                    var="parsedDateTime" type="both" />
 
                     <fmt:formatDate value="${parsedDateTime}" pattern="dd.MM.yyyy" />
                     <br>
                     <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm" />
                 </td>
-                <td>${ordersInWork.orderDetails.customerName}</td>
-                <td>${ordersInWork.orderDetails.address}</td>
-                <td>${ordersInWork.orderDetails.countRooms}</td>
-                <td>${ordersInWork.orderDetails.city}</td>
-                <td>${ordersInWork.orderDetails.phoneNumber}</td>
-                <td>${ordersInWork.orderDetails.squareArea}</td>
+                <td>${ordersInArchive.orderDetails.customerName}</td>
+                <td>${ordersInArchive.orderDetails.address}</td>
+                <td>${ordersInArchive.orderDetails.countRooms}</td>
+                <td>${ordersInArchive.orderDetails.city}</td>
+                <td>${ordersInArchive.orderDetails.phoneNumber}</td>
+                <td>${ordersInArchive.orderDetails.squareArea}</td>
                 <td align="left">
                     <table border="0">
                         <tr>
                             <th></th>
                             <th></th>
                         </tr>
-                    <c:forEach var="report" items="${ordersInWork.reports}">
-                        <tr>
-                            <td align="center">
-                                <fmt:parseDate value="${report.date}" pattern="yyyy-MM-dd'T'HH:mm:ss"
-                                               var="parsedDateTime" type="both" />
-                                <br>
-                                <fmt:formatDate value="${parsedDateTime}" pattern="dd.MM.yyyy" />
-                                <br>
-                                <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm" />
-                            </td>
-                <td>
-                    <br>${report.description}</td>
-                        </tr>
-                </c:forEach>
+                        <c:forEach var="report" items="${ordersInArchive.reports}">
+                            <tr>
+                                <td align="center">
+                                    <fmt:parseDate value="${report.date}" pattern="yyyy-MM-dd'T'HH:mm:ss"
+                                                   var="parsedDateTime" type="both" />
+                                    <br>
+                                    <fmt:formatDate value="${parsedDateTime}" pattern="dd.MM.yyyy" />
+                                    <br>
+                                    <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm" />
+                                </td>
+                                <td>
+                                    <br>${report.description}
+                                </td>
+                            </tr>
+                        </c:forEach>
                     </table>
                 </td>
                 <td col style="background-color:white" align="center">
+                    <security:authorize access="hasAnyRole('ADMIN')">
                     <table>
                         <tr>
                             <th></th>
@@ -123,13 +122,14 @@
                             </td>
                         </tr>
                     </table>
+                    </security:authorize>
                 </td>
             </tr>
         </c:forEach>
     </table>
     <font size="4" face="Courier New" >
-        <c:if test="${countOrdersInWork < 1}">
-        <p>У Вас еще нет заявок в работе! Что бы взять заявку, перейдите по кнопке "Взять заявку"<p>
+        <c:if test="${countOrdersInArchive < 1}">
+        <p>У Вас еще нет заявок в архиве!<p>
         </c:if>
     </font>
 </font>

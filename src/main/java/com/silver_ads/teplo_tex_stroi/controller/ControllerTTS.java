@@ -281,16 +281,28 @@ public class ControllerTTS implements ErrorController {
         List<Order> orders = user.getOrders();
         List<Order> ordersInWork = orders.stream().filter(order -> order.getStatusOrder().equals(OrderStatus.IN_WORK.name())).collect(Collectors.toList());
         int countOrdersInWork = ordersInWork.size();
-        List<Order> ordersInArchive = orders.stream().filter(order -> !order.getStatusOrder().equals(OrderStatus.IN_WORK.name())).collect(Collectors.toList());
-        int countOrdersInArchive = ordersInArchive.size();
 
         model.addAttribute("ordersInWork", ordersInWork);
         model.addAttribute("countOrdersInWork", countOrdersInWork);
+        model.addAttribute("user", user);
+
+        return "user-panel";
+    }
+
+
+
+    @RequestMapping("/order/archive")
+    public String archive(Model model, Principal principal) {
+        User user = userServices.getUserByLoginName(principal.getName());
+        List<Order> orders = user.getOrders();
+        List<Order> ordersInArchive = orders.stream().filter(order -> !order.getStatusOrder().equals(OrderStatus.IN_WORK.name())).collect(Collectors.toList());
+        int countOrdersInArchive = ordersInArchive.size();
+
         model.addAttribute("ordersInArchive", ordersInArchive);
         model.addAttribute("countOrdersInArchive", countOrdersInArchive);
         model.addAttribute("user", user);
 
-        return "user-panel";
+        return "archive";
     }
 
     @RequestMapping("/order/{id}")
