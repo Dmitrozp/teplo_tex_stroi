@@ -35,9 +35,7 @@ public class ControllerTTS implements ErrorController {
         model.addAttribute("orders", orders);
         return "home-page";
     }
-
-
-
+    
     @RequestMapping("/order")
     public String showAllOrders(Model model, Principal principal) {
         User user = userServices.getUserByLoginName(principal.getName());
@@ -126,14 +124,9 @@ public class ControllerTTS implements ErrorController {
 
     @RequestMapping("/order/createReport")
     public String createReport(@RequestParam("orderId") Long orderId, Principal principal, Model model) {
-//        Order order = orderServices.getOrderById(orderId);
-//        User user = userServices.getUserByLoginName(principal.getName());
         Report report = new Report();
         report.setOrder(new Order());
         report.getOrder().setId(orderId);
-//        report.setOrder(order);
-//        report.setUserCreator(user);
-//        reportServices.saveReport(report);
         model.addAttribute("report", report);
 
         return "create-report";
@@ -189,9 +182,11 @@ public class ControllerTTS implements ErrorController {
 
     @RequestMapping("/order/saveCanceledOrder")
     public String saveCanceledOrder(@ModelAttribute("report") Report report, Principal principal) throws Exception {
-        if(report.getDescription().length() < 10 ){
-            throw new Exception("Описание не может быть пустым, или меньше 10 букв. Добавьте пожалуйста описание к отменненной заявке ");
+        final int MIN_SYMBOLS_OF_DESCRIPTION = 10;
+        if(report.getDescription().length() < MIN_SYMBOLS_OF_DESCRIPTION ){
+            throw new Exception("Описание не может быть пустым, или меньше "+MIN_SYMBOLS_OF_DESCRIPTION+" букв. Добавьте пожалуйста описание к отменненной заявке ");
         }
+
         orderServices.saveCanceledOrder(report,principal.getName());
 
         return "redirect:/profile";
@@ -281,6 +276,11 @@ public class ControllerTTS implements ErrorController {
         List<Order> orders = user.getOrders();
         List<Order> ordersInWork = orders.stream().filter(order -> order.getStatusOrder().equals(OrderStatus.IN_WORK.name())).collect(Collectors.toList());
         int countOrdersInWork = ordersInWork.size();
+
+        if (countOrdersInWork != user.getUserDetails().getCurrentCountOrders() ){
+            user.getUserDetails().setCurrentCountOrders(countOrdersInWork);
+            userServices.save(user);
+        }
 
         model.addAttribute("ordersInWork", ordersInWork);
         model.addAttribute("countOrdersInWork", countOrdersInWork);

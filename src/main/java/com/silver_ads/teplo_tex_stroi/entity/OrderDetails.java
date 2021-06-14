@@ -1,9 +1,6 @@
 package com.silver_ads.teplo_tex_stroi.entity;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -25,7 +22,7 @@ public class OrderDetails {
     @Column(name = "count_rooms")
     private String countRooms;
     @Column(name = "square_area")
-    private Integer squareArea;
+    private String squareArea;
     @Column(name = "notes")
     private String notes;
     @Column(name = "city")

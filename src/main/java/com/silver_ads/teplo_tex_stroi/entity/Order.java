@@ -1,5 +1,6 @@
 package com.silver_ads.teplo_tex_stroi.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -67,6 +68,7 @@ public class Order {
     public int hashCode() {
         return Objects.hash(date, userCreator);
     }
+
 }
 
 

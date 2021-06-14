@@ -3,6 +3,7 @@ package com.silver_ads.teplo_tex_stroi.controller;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.silver_ads.teplo_tex_stroi.entity.Order;
 import com.silver_ads.teplo_tex_stroi.entity.OrderDetails;
+import com.silver_ads.teplo_tex_stroi.enums.order.OrderStatus;
 import com.silver_ads.teplo_tex_stroi.exception_handling.NoSuchOrderDetailsException;
 import com.silver_ads.teplo_tex_stroi.service.OrderDetailsServices;
 import com.silver_ads.teplo_tex_stroi.service.OrderServicesImpl;
@@ -21,7 +22,7 @@ public class RESTController {
 
     @GetMapping("/order")
     public List<Order> getAllOrder() {
-        List<Order> orders = orderServices.getOrdersWithHidePhoneAndUserNull();
+        List<Order> orders = orderServices.getOrdersWithHidePhoneAndStatusOrder(OrderStatus.NEW_ORDER_VERIFIED.name());
         if (orders == null) {
             throw new NoSuchOrderDetailsException("Not found any orders");
         }

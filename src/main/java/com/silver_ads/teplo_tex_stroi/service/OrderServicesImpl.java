@@ -79,6 +79,7 @@ public class OrderServicesImpl implements OrderServices {
         order.addReport(report);
         user.getUserDetails().setCurrentComplededCountOrders(user.getUserDetails().getCurrentComplededCountOrders()
                 + NEW_COMPLETED_ORDER);
+        user.getUserDetails().setCurrentCountOrders(user.getUserDetails().getCurrentCountOrders() - NEW_COMPLETED_ORDER);
         order.setVerifier(userServices.findManagerWhoCanAcceptOrder().getLoginName());
         orderRepository.save(order);
     }
@@ -96,11 +97,11 @@ public class OrderServicesImpl implements OrderServices {
         report.setUserCreator(user);
         order.addReport(report);
         order.setStatusOrder(OrderStatus.CANCELED.name());
-        //order.setUserExecutor(userServices.findManagerWhoCanAcceptOrder());
         order.setVerifier(userServices.findManagerWhoCanAcceptOrder().getLoginName());
         orderRepository.save(order);
         int currentCanceledCountOrders = user.getUserDetails().getCurrentCanceledCountOrders();
         user.getUserDetails().setCurrentCanceledCountOrders(currentCanceledCountOrders + NEW_CANCELED_ORDER );
+        user.getUserDetails().setCurrentCountOrders(user.getUserDetails().getCurrentCountOrders() - NEW_CANCELED_ORDER);
         userServices.save(user);
     }
 
@@ -188,11 +189,7 @@ public class OrderServicesImpl implements OrderServices {
         order.setStatusOrder(OrderStatus.NEW_ORDER_NOT_VERIFIED.name());
         order.setStatusPayment(PaymentStatus.UNKNOWN.name());
         order.setOrderDetails(orderDetailsExternal);
-//        order.getOrderDetails().setTypeOrder(OrderType.PROSCHET_NA_UTEPLENIE.name());
-//        order.getOrderDetails().setSourceOrder(OrderSource.FORM_SITE_SILVER_ADS_COM.name());
-        //order.setUserExecutor(userServices.findManagerWhoCanAcceptOrder());
         save(order);
-        //order.setUserExecutor(null);
         return order;
     }
 
