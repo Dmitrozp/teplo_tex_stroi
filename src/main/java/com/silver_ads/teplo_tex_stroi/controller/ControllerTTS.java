@@ -89,9 +89,16 @@ public class ControllerTTS implements ErrorController {
         List<Order> canceledOrders =
                 orderServices.getOrdersForManagerByStatusAndManagerLoginName(OrderStatus.CANCELED.name(), user);
 
+        List<Order> ordersInWork = orderServices.getOrdersForManagerByStatus(OrderStatus.IN_WORK.name());
+
+
         int countNewOrders = newOrders.size();
         model.addAttribute("newOrders", newOrders);
         model.addAttribute("countNewOrders", countNewOrders);
+
+        int countOrdersInWork = ordersInWork.size();
+        model.addAttribute("ordersInWork", ordersInWork);
+        model.addAttribute("countOrdersInWork", countOrdersInWork);
 
         int countCompletedOrders = completedOrders.size();
         model.addAttribute("completedOrders", completedOrders);
@@ -109,7 +116,6 @@ public class ControllerTTS implements ErrorController {
     public String sendOrderInWork(@RequestParam("orderId") int orderId, Principal principal, Model model) {
         Order order = orderServices.getOrderById(orderId);
         order.setStatusOrder(OrderStatus.NEW_ORDER_VERIFIED.name());
-        //order.setUserExecutor(null);
         orderServices.save(order);
 
         return "redirect:/manager";

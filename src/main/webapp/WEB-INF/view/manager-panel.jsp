@@ -124,6 +124,120 @@
     </font>
 </font>
 
+<security:authorize access="hasAnyRole('SUPER_MANAGER', 'ADMIN')">
+<br>
+<font size="7" face="Courier New" >Заявки в работе </font>
+<br>
+<br>
+<font size="4" face="Courier New" >
+
+    <table width="100%">
+        <tr col span="2" style="background:Khaki" align="center">
+            <th>Дата заявки</th>
+            <th>Исполнитель</th>
+            <th>Имя заказчика</th>
+            <th>Адрес</th>
+            <th>Количество комнат</th>
+            <th>Город</th>
+            <th>Телефон</th>
+            <th>Площадь</th>
+            <th>Примечание</th>
+            <th>Отчеты</th>
+        </tr>
+
+        <c:forEach var="ordersInWork" items="${ordersInWork}" >
+
+            <c:url var="sendOrderInWork" value="/manager/sendOrderInWork" >
+                <c:param name="orderId" value="${ordersInWork.id}"/>
+            </c:url>
+
+            <c:url var="editOrder" value="/order/edit" >
+                <c:param name="orderId" value="${ordersInWork.id}"/>
+            </c:url>
+
+            <c:url var="addOrder" value="/order/addOrder" >
+                <c:param name="orderId" value="${ordersInWork.id}"/>
+            </c:url>
+
+            <tr col style="background-color:LightCyan" align="center">
+                <td>
+                    <fmt:parseDate value="${ordersInWork.date}" pattern="yyyy-MM-dd'T'HH:mm:ss"
+                                   var="parsedDateTime" type="both" />
+
+                    <fmt:formatDate value="${parsedDateTime}" pattern="dd.MM.yyyy" />
+                    <br>
+                    <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm" />
+                </td>
+                <td>${ordersInWork.userExecutor.loginName}</td>
+                <td>${ordersInWork.orderDetails.customerName}</td>
+                <td>${ordersInWork.orderDetails.address}</td>
+                <td>${ordersInWork.orderDetails.countRooms}</td>
+                <td>${ordersInWork.orderDetails.city}</td>
+                <td>${ordersInWork.orderDetails.phoneNumber}</td>
+                <td>${ordersInWork.orderDetails.squareArea}</td>
+                <td align="left">${ordersInWork.orderDetails.notes}</td>
+                <td align="left">
+                    <table border="0">
+                        <tr>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        <c:forEach var="report" items="${ordersInWork.reports}">
+                            <tr>
+                                <td align="center">
+                                    <fmt:parseDate value="${report.date}" pattern="yyyy-MM-dd'T'HH:mm:ss"
+                                                   var="parsedDateTime" type="both" />
+                                    <br>
+                                    <fmt:formatDate value="${parsedDateTime}" pattern="dd.MM.yyyy" />
+                                    <br>
+                                    <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm" />
+                                </td>
+                                <td>
+                                    <br>${report.description}</td>
+                            </tr>
+                        </c:forEach>
+                    </table>
+                <td col style="background-color:white" align="center">
+                    <table>
+                        <tr>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <br>
+                                <security:authorize access="hasAnyRole('SUPER_MANAGER', 'MANAGER', 'ADMIN')">
+                                    <input type="button" value="Отправить заявку в работу"
+                                           onclick = "window.location.href = '${sendOrderInWork}'"/>
+                                </security:authorize>
+                                <p></p>
+                                <security:authorize access="hasAnyRole('SUPER_MANAGER','MANAGER', 'ADMIN')">
+                                    <input type="button" value="<<   Редактировать   >>"
+                                           onclick = "window.location.href = '${editOrder}'"/>
+                                </security:authorize>
+                                <p></p>
+                                <security:authorize access="hasAnyRole('SUPER_MANAGER', 'ADMIN')">
+                                    <input type="button" value="<<   Взять заявку   >>"
+                                           onclick = "window.location.href = '${addOrder}'"/>
+                                </security:authorize>
+                                <br>
+                                <p> </p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </c:forEach>
+    </table>
+    <font size="4" face="Courier New" >
+        <c:if test="${countOrdersInWork < 1}">
+        <p>Нет заявок в работе! <p>
+        </c:if>
+    </font>
+</font>
+</security:authorize>
+
+
+
 <br>
 <font size="6" face="Courier New" >Отмененные заявки, по которым нужно проверить причину отмены</font>
 <br>
