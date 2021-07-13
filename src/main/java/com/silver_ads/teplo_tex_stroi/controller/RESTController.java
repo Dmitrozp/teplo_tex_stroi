@@ -52,6 +52,7 @@ public class RESTController {
                     "\nКоличество комнат  " + orderDetailsExternal.getCountRooms() +
                     "\nПримечание  " + orderDetailsExternal.getNotes());
             orders.get(0).addReport(report);
+            orders.get(0).setDate(LocalDateTime.now());
             orders.get(0).setStatusOrder(OrderStatus.IN_WORK.name());
 
             orderServices.save(orders.get(0));
