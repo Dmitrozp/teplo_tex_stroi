@@ -43,7 +43,7 @@ public class RESTController {
         List<Order> orders = orderServices.findOrdersWhereWithEqualsPhoneNumber(orderDetailsExternal.getPhoneNumber());
         if (orders!= null){
             Report report = new Report();
-            report.setDate(LocalDateTime.now());
+            report.setDate(LocalDateTime.now().plusSeconds(3));
             report.setDescription("ПОВТОРНАЯ ЗАЯВКА!!!" + "" +
                     "\nИмя клиента  " + orderDetailsExternal.getCustomerName() +
                     "\nГород  " + orderDetailsExternal.getCity() +
@@ -52,7 +52,7 @@ public class RESTController {
                     "\nКоличество комнат  " + orderDetailsExternal.getCountRooms() +
                     "\nПримечание  " + orderDetailsExternal.getNotes());
             orders.get(0).addReport(report);
-            orders.get(0).setDate(LocalDateTime.now());
+            orders.get(0).setDate(LocalDateTime.now().plusSeconds(3));
             orders.get(0).setStatusOrder(OrderStatus.IN_WORK.name());
 
             orderServices.save(orders.get(0));
