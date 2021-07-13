@@ -193,6 +193,11 @@ public class OrderServicesImpl implements OrderServices {
         return order;
     }
 
+    public List<Order> findOrdersWhereWithEqualsPhoneNumber(String phoneNumber) {
+        List<Order> orders = orderRepository.findOrderByOrderDetailsPhoneNumber(phoneNumber);
+        return orders;
+    }
+
     private String hidingPhoneNumber(String phoneNumber) {
         final int firstSumbolOfPhoneNumber = 0;
         final int countHideNumber = 2;
