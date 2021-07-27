@@ -81,13 +81,13 @@
                 <td>${ordersInWork.orderDetails.phoneNumber}</td>
                 <td>${ordersInWork.orderDetails.squareArea}</td>
                 <td align="left">
-                    <table border="0" style="background:#ffffff">
+                    <table border="0">
                         <tr>
                             <th></th>
                             <th></th>
                         </tr>
                     <c:forEach var="report" items="${ordersInWork.reports}">
-                        <tr col span="2" style="background:LightCyan" align="center">
+                        <tr align="center">
                             <td align="center">
                                 <fmt:parseDate value="${report.date}" pattern="yyyy-MM-dd'T'HH:mm:ss"
                                                var="parsedDateTime" type="both" />
