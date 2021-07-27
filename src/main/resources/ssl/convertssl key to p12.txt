@@ -1,4 +1,4 @@
-pkcs12 -export -in D:/teplo_tex_stroi/certificate.crt -inkey D:/teplo_tex_stroi/private.key -name teplotexstroi.tech -out D:/teplo_tex_stroi/ca_bundle.p12
+pkcs12 -export -in D:/teplotexstroi.tech/certificate.crt -inkey D:/teplotexstroi.tech/private.key -name teplotexstroi.tech -out D:/teplotexstroi.tech/ca_bundle.p12
 
 
-keytool.exe -importkeystore -deststorepass qazwsx -destkeystore D:/teplo_tex_stroi/ca_bundle.jks -srckeystore D:/teplo_tex_stroi/ca_bundle.p12 -srcstoretype PKCS12
+keytool.exe -importkeystore -deststorepass qazwsx -destkeystore D:/teplotexstroi.tech/ca_bundle.jks -srckeystore D:/teplotexstroi.tech/ca_bundle.p12 -srcstoretype PKCS12

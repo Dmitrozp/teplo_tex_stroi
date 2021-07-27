@@ -44,7 +44,7 @@ public class RESTController {
         if (!orders.isEmpty()){
             Report report = new Report();
             report.setDate(LocalDateTime.now().plusSeconds(3));
-            report.setDescription("ПОВТОРНАЯ ЗАЯВКА!!!" + "" +
+            report.setDescription("<b><p style=\"color:#ff2200\">ПОВТОРНАЯ ЗАЯВКА!!!</b></p>" + "" +
                     "\nИмя клиента  " + orderDetailsExternal.getCustomerName() +
                     "\nГород  " + orderDetailsExternal.getCity() +
                     "\nАдрес  " + orderDetailsExternal.getAddress() +

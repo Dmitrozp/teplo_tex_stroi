@@ -121,10 +121,12 @@ public class ControllerTTS implements ErrorController {
         return "redirect:/manager";
     }
 
-    @RequestMapping(value = "/.well-known/pki-validation/D0AA6539E8AB5A083BFE76B3F53DD589.txt", method = RequestMethod.GET)
+
+
+    @RequestMapping(value = "/.well-known/pki-validation/669424F355907B4335118701E4DE92E0.txt", method = RequestMethod.GET)
     @ResponseBody
     public FileSystemResource getFile() {
-        return new FileSystemResource(new File("src/main/resources/D0AA6539E8AB5A083BFE76B3F53DD589.txt"));
+        return new FileSystemResource(new File("src/main/resources/669424F355907B4335118701E4DE92E0.txt"));
     }
 
 
@@ -267,10 +269,13 @@ public class ControllerTTS implements ErrorController {
 
     @RequestMapping("/order/saveCompletedOrder")
     public String saveCompletedOrder(@ModelAttribute("order") Order orderWithChanges, Principal principal) throws Exception {
-        if (orderWithChanges.getOrderDetails().getSumOfPaymentCustomer() == null || orderWithChanges.getOrderDetails().getSquareAreaFromReport() == null){
-            throw new Exception("Поля \"площадь утепления\" и \"сумма оплаты клиентом\" не могут быть пустые! Пожалуйста введите данные. ");
+        if (orderWithChanges.getOrderDetails().getSumOfPaymentCustomer() == null || orderWithChanges.getOrderDetails().getSquareAreaFromReport() == null
+        || orderWithChanges.getOrderDetails().getSumOfPaymentCustomer() < 0){
+            throw new Exception("Поля \"площадь утепления\" и \"сумма оплаты клиентом\" не могут быть пустые или отрицательными! Пожалуйста введите данные. ");
         }
         User user = userServices.getUserByLoginName(principal.getName());
+        user.getUserDetails().setBalance(user.getUserDetails().getBalance() - orderWithChanges.getOrderDetails().getSumOfPaymentCustomer()/10);
+        userServices.save(user);
         orderServices.saveCompletedOrder(orderWithChanges, user);
 
         return "redirect:/profile";

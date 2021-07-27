@@ -53,7 +53,8 @@
             <th>Город</th>
             <th>Телефон</th>
             <th>Площадь</th>
-            <th width="100">Примечание</th>
+            <th>Примечание</th>
+            <th>Отчеты</th>
         </tr>
 
         <c:forEach var="newOrders" items="${newOrders}" >
@@ -86,6 +87,27 @@
                 <td>${newOrders.orderDetails.phoneNumber}</td>
                 <td>${newOrders.orderDetails.squareArea}</td>
                 <td align="left">${newOrders.orderDetails.notes}</td>
+                <td align="left">
+                    <table>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        <c:forEach var="report" items="${newOrders.reports}">
+                            <tr>
+                                <td>
+                                    <fmt:parseDate value="${report.date}" pattern="yyyy-MM-dd'T'HH:mm:ss"
+                                                   var="parsedDateTime" type="both" />
+
+                                    <fmt:formatDate value="${parsedDateTime}" pattern="dd.MM.yyyy" />
+                                    <br>
+                                    <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm" />
+                                </td>
+                                <td>${report.description}</td>
+                            </tr>
+                        </c:forEach>
+                    </table>
+                </td>
                 <td col style="background-color:white" align="center">
                     <table>
                         <tr>
@@ -177,13 +199,13 @@
                 <td>${ordersInWork.orderDetails.squareArea}</td>
                 <td align="left">${ordersInWork.orderDetails.notes}</td>
                 <td align="left">
-                    <table border="0">
+                    <table border="0" style="background:#ffffff">
                         <tr>
                             <th></th>
                             <th></th>
                         </tr>
                         <c:forEach var="report" items="${ordersInWork.reports}">
-                            <tr>
+                            <tr col span="2" style="background:LightCyan" align="center">
                                 <td align="center">
                                     <fmt:parseDate value="${report.date}" pattern="yyyy-MM-dd'T'HH:mm:ss"
                                                    var="parsedDateTime" type="both" />
@@ -338,6 +360,7 @@
             <th>Город</th>
             <th>Телефон</th>
             <th>Площадь</th>
+            <th>Сумма оплаты клиентом</th>
             <th width="100">Отчеты</th>
         </tr>
 
@@ -362,6 +385,7 @@
                 <td>${completedOrders.orderDetails.city}</td>
                 <td>${completedOrders.orderDetails.phoneNumber}</td>
                 <td>${completedOrders.orderDetails.squareArea}</td>
+                <td>${completedOrders.sumPayment}</td>
                 <td align="left">
                     <table>
                         <tr>
