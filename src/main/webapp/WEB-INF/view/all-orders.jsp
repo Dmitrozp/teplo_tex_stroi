@@ -18,7 +18,7 @@
                 <p align="right">Привет  ${user.userDetails.name} ${user.userDetails.lastName} Ваш город: ${user.userDetails.city} </p>
                 <p align="right">Логин: ${user.loginName}</p>
 
-                <p align="right">Баланс: ${user.userDetails.balance} грн</p>
+                <p align="right"><b>Баланс: ${user.userDetails.balance} грн</b></p>
                 <p align="right">Макс. заявок: <b style="color: #ff3300">${user.userDetails.maxCountOrders} </b>
                     Заявок в работе: <b style="color: #ff0000">${countOrders}</b></p>
                 <p align="right">Макс. отмен заявок : <b style="color: #ff0000">${user.userDetails.maxCountCanceledOrders} </b>

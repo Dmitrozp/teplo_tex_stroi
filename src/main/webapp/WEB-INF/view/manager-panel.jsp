@@ -103,7 +103,13 @@
                                     <br>
                                     <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm" />
                                 </td>
-                                <td>${report.description}</td>
+                                <td>
+                                <br>
+                                    <br>
+                                        ${report.description}
+                                    <br>
+                                    <br>
+                                </td>
                             </tr>
                         </c:forEach>
                     </table>
@@ -199,13 +205,13 @@
                 <td>${ordersInWork.orderDetails.squareArea}</td>
                 <td align="left">${ordersInWork.orderDetails.notes}</td>
                 <td align="left">
-                    <table border="0" style="background:#ffffff">
+                    <table border="0" >
                         <tr>
                             <th></th>
                             <th></th>
                         </tr>
                         <c:forEach var="report" items="${ordersInWork.reports}">
-                            <tr col span="2" style="background:LightCyan" align="center">
+                            <tr align="center">
                                 <td align="center">
                                     <fmt:parseDate value="${report.date}" pattern="yyyy-MM-dd'T'HH:mm:ss"
                                                    var="parsedDateTime" type="both" />
@@ -215,7 +221,12 @@
                                     <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm" />
                                 </td>
                                 <td>
-                                    <br>${report.description}</td>
+                                    <br>
+                                    <br>
+                                        ${report.description}
+                                    <br>
+                                    <br>
+                                </td>
                             </tr>
                         </c:forEach>
                     </table>
@@ -320,7 +331,13 @@
                                     <br>
                                     <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm" />
                                 </td>
-                                <td>${report.description}</td>
+                                <td>
+                                    <br>
+                                    <br>
+                                        ${report.description}
+                                    <br>
+                                    <br>
+                                </td>
                             </tr>
                         </c:forEach>
                     </table>
@@ -402,7 +419,13 @@
                                     <br>
                                     <fmt:formatDate value="${parsedDateTime}" pattern="HH:mm" />
                                 </td>
-                                <td>${report.description}</td>
+                                <td>
+                                    <br>
+                                    <br>
+                                        ${report.description}
+                                    <br>
+                                    <br>
+                                </td>
                             </tr>
                         </c:forEach>
                     </table>
