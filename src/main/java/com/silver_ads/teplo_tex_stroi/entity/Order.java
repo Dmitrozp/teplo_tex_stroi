@@ -31,6 +31,13 @@ public class Order {
     @Column(name = "status_payment")
     private String statusPayment;
 
+    @Column(name = "summ_of_contract")
+    private Integer summOfContract;
+    @Column(name = "name_contract")
+    private String nameContract;
+    @Column(name = "date_finished")
+    private String dateFinished;
+
     @Column(name = "user_verifier")
     private String verifier;
 

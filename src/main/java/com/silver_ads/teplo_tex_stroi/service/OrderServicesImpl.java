@@ -64,14 +64,13 @@ public class OrderServicesImpl implements OrderServices {
     public void saveCompletedOrder(Order orderWithChanges, User user){
         final Integer NEW_COMPLETED_ORDER =1;
         Order order = getOrderById(orderWithChanges.getId());
-        order.getOrderDetails().setSquareAreaFromReport(orderWithChanges.getOrderDetails().getSquareAreaFromReport());
         order.getOrderDetails().setSumOfPaymentCustomer(orderWithChanges.getOrderDetails().getSumOfPaymentCustomer());
         order.setStatusPayment(PaymentStatus.PROCESSING.name());
         order.setStatusOrder(OrderStatus.COMPLETED.name());
         Report report = new Report();
         report.setOrder(order);
         report.setDate(changeTimeIfNullSeconds(LocalDateTime.now()));
-        report.setDescription("ВЫПОЛНЕНA! исполнителем логин " + user.getLoginName()
+        report.setDescription("<b><p style=\"color:#41f01e\">ВЫПОЛНЕНА!!!</b></p> исполнителем логин " + user.getLoginName()
                 + " Имя: " + user.getUserDetails().getName() + " Заявка ID: " + order.getId()
                 + " Площадь утепления: " + order.getOrderDetails().getSquareAreaFromReport()
                 + " Сумма оплаты клиентом: " + order.getOrderDetails().getSumOfPaymentCustomer());
@@ -90,7 +89,7 @@ public class OrderServicesImpl implements OrderServices {
         Order order = getOrderById(report.getOrder().getId());
         User user = userServices.getUserByLoginName(loginName);
 
-        report.setDescription("ОТМЕНА! исполнителем логин " + user.getLoginName()
+        report.setDescription("<b><p style=\"color:#f01e1e\">ОТМЕНА!!!</b></p> исполнителем логин " + user.getLoginName()
                 + " Имя: " + user.getUserDetails().getName() + " Заявка ID: " + order.getId()
                 + " Причина отмены : " + report.getDescription());
         report.setDate(changeTimeIfNullSeconds(LocalDateTime.now()));
@@ -110,7 +109,7 @@ public class OrderServicesImpl implements OrderServices {
         Order order = getOrderById(orderId);
         User user = userServices.getUserByLoginName(loginName);
         Report report = new Report();
-        report.setDescription("ОТМЕНА! исполнителем логин " + user.getLoginName()
+        report.setDescription("<b><p style=\"color:#f01e1e\">ОТМЕНА!!!</b></p> исполнителем логин " + user.getLoginName()
                 + " Имя: " + user.getUserDetails().getName() + " Заявка ID: " + order.getId());
         report.setDate(changeTimeIfNullSeconds(LocalDateTime.now()));
         report.setUserCreator(user);

@@ -11,10 +11,10 @@
 <br>
 <br>
 <font size="3" face="Courier New" >
-    <p>Заявка   № ${order.id}</p>
-    <p>Дата     : ${order.date}</p>
-    <p>Заказчик : ${order.orderDetails.customerName}</p>
+    <p>Договор   № ${order.nameContract}</p>
+    <p>Сумма по договору : ${order.summOfContract}</p>
     <p>Адрес    : ${order.orderDetails.address}</p>
+    <p>Заказчик : ${order.orderDetails.customerName}</p>
     <p>Город    : ${order.orderDetails.city}</p>
     <p>Телефон  : ${order.orderDetails.phoneNumber}</p>
 </font>
@@ -23,9 +23,6 @@
 <h3>Отчет о заявке </h3>
 <form:form action="saveCompletedOrder" modelAttribute="order">
     <form:hidden path="id"/>
-    <p><b>Введите площадь утепления :</b><br>
-    >><form:input type="number" size="20" path="orderDetails.squareAreaFromReport"/> * только цифры
-    </p>
 
     <p><b>Введите сумму оплаты клиентом :</b><br>
     >><form:input type="number" size="20" path="orderDetails.sumOfPaymentCustomer"/> * только цифры

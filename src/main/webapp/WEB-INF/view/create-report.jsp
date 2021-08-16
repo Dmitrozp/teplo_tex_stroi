@@ -3,11 +3,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Отчета о заявке</title>
+    <title>Комментарий к заявке</title>
 </head>
 <body>
 <font size="5" face="Courier New" >
-Создать отчет о заявке
+Оставить комментарий к заявке
 </font>
 <br>
 <br>

@@ -76,8 +76,8 @@ public class ControllerTTS implements ErrorController {
             userServices.save(user);
         } else {
             throw new Exception("<br>Либо у Вас есть задолжность по оплате за заявки! Которая привышает <b>"
-                    + user.getUserDetails().getMaxCrediteBalance() + "</b>, <br> погасите пожалуйста полностью задолжность и сможете продолжить брать заявки в работу" +
-                    "<br> <br>Либо у Вас в работе заявок больше чем установленный лимит <b>" + user.getUserDetails().getMaxCountOrders() + "грн"+
+                    + user.getUserDetails().getMaxCrediteBalance() + "грн" + "</b>, <br> погасите пожалуйста полностью задолжность и сможете продолжить брать заявки в работу" +
+                    "<br> <br>Либо у Вас в работе заявок больше чем установленный лимит <b>" + user.getUserDetails().getMaxCountOrders() +
                     "</b><br> <br> Либо у Вас количество отменненных заявок больше лимита <b>" + user.getUserDetails().getMaxCountCanceledOrders() +
                     "</b><br> <br> Если это ошибочно, обратитесь к администратору на вайбер, или по тел. <b>097 870 63 63</b>");
         }
@@ -95,6 +95,7 @@ public class ControllerTTS implements ErrorController {
                 orderServices.getOrdersForManagerByStatusAndManagerLoginName(OrderStatus.CANCELED.name(), user);
 
         List<Order> ordersInWork = orderServices.getOrdersForManagerByStatus(OrderStatus.IN_WORK.name());
+        List<Order> ordersExecuting = orderServices.getOrdersForManagerByStatus(OrderStatus.EXECUTING.name());
 
 
         int countNewOrders = newOrders.size();
@@ -104,6 +105,10 @@ public class ControllerTTS implements ErrorController {
         int countOrdersInWork = ordersInWork.size();
         model.addAttribute("ordersInWork", ordersInWork);
         model.addAttribute("countOrdersInWork", countOrdersInWork);
+
+        int countOrdersExecuting = ordersExecuting.size();
+        model.addAttribute("ordersExecuting", ordersExecuting);
+        model.addAttribute("countOrdersExecuting", countOrdersExecuting);
 
         int countCompletedOrders = completedOrders.size();
         model.addAttribute("completedOrders", completedOrders);
@@ -261,6 +266,43 @@ public class ControllerTTS implements ErrorController {
         return "redirect:/manager";
     }
 
+    @RequestMapping("/order/createExecutingOrder")
+    public String createExecutingOrder(@RequestParam("orderId") int orderId, Principal principal, Model model) {
+        Order order = orderServices.getOrderById(orderId);
+        User user = userServices.getUserByLoginName(principal.getName());
+
+        model.addAttribute("order", order);
+        model.addAttribute("user", user);
+
+        return "executing-order";
+    }
+
+    @RequestMapping("/order/saveExecutingOrder")
+    public String saveExecutingOrder(@ModelAttribute("order") Order orderWithChanges, Principal principal) throws Exception {
+        if (orderWithChanges.getId() == null || orderWithChanges.getNameContract() == null
+        || orderWithChanges.getSummOfContract() <= 0 || orderWithChanges.getDateFinished() == null ||
+                orderWithChanges.getOrderDetails().getSquareAreaFromReport() == null ||
+                orderWithChanges.getOrderDetails().getAddress() == null){
+            throw new Exception("Поля \"№ договора\" и \"адрес\" и \"сумма оплаты по договору\" и \"дата окончания работ\" и \"площадь утепления\" не могут быть пустые или отрицательными! Пожалуйста введите данные. ");
+        }
+
+        Order order = orderServices.getOrderById(orderWithChanges.getId());
+        order.setNameContract(orderWithChanges.getNameContract());
+        order.setSummOfContract(orderWithChanges.getSummOfContract());
+        order.setDateFinished(orderWithChanges.getDateFinished());
+        order.getOrderDetails().setSquareAreaFromReport(orderWithChanges.getOrderDetails().getSquareAreaFromReport());
+        order.getOrderDetails().setAddress(orderWithChanges.getOrderDetails().getAddress());
+        order.setStatusOrder(OrderStatus.EXECUTING.name());
+
+        User user = userServices.getUserByLoginName(principal.getName());
+        user.getUserDetails().setBalance(user.getUserDetails().getBalance() - Math.abs(orderWithChanges.getSummOfContract())/10);
+
+        userServices.save(user);
+        orderServices.save(order);
+
+        return "redirect:/profile";
+    }
+
     @RequestMapping("/order/createCompletedOrder")
     public String createCompletedOrder(@RequestParam("orderId") int orderId, Principal principal, Model model) {
         Order order = orderServices.getOrderById(orderId);
@@ -274,13 +316,11 @@ public class ControllerTTS implements ErrorController {
 
     @RequestMapping("/order/saveCompletedOrder")
     public String saveCompletedOrder(@ModelAttribute("order") Order orderWithChanges, Principal principal) throws Exception {
-        if (orderWithChanges.getOrderDetails().getSumOfPaymentCustomer() == null || orderWithChanges.getOrderDetails().getSquareAreaFromReport() == null
-        || orderWithChanges.getOrderDetails().getSumOfPaymentCustomer() < 0){
-            throw new Exception("Поля \"площадь утепления\" и \"сумма оплаты клиентом\" не могут быть пустые или отрицательными! Пожалуйста введите данные. ");
+        if (orderWithChanges.getOrderDetails().getSumOfPaymentCustomer() == null || orderWithChanges.getOrderDetails().getSumOfPaymentCustomer() < 0){
+            throw new Exception("Поле \"сумма оплаты клиентом\" не может быть пустым или отрицательным! Пожалуйста введите данные. ");
         }
         User user = userServices.getUserByLoginName(principal.getName());
-        user.getUserDetails().setBalance(user.getUserDetails().getBalance() - orderWithChanges.getOrderDetails().getSumOfPaymentCustomer()/10);
-        userServices.save(user);
+
         orderServices.saveCompletedOrder(orderWithChanges, user);
 
         return "redirect:/profile";
@@ -292,6 +332,8 @@ public class ControllerTTS implements ErrorController {
         List<Order> orders = user.getOrders();
         List<Order> ordersInWork = orders.stream().filter(order -> order.getStatusOrder().equals(OrderStatus.IN_WORK.name())).collect(Collectors.toList());
         int countOrdersInWork = ordersInWork.size();
+        List<Order> ordersExecuting = orders.stream().filter(order -> order.getStatusOrder().equals(OrderStatus.EXECUTING.name())).collect(Collectors.toList());
+        int countOrdersExecuting = ordersExecuting.size();
 
         if (countOrdersInWork != user.getUserDetails().getCurrentCountOrders() ){
             user.getUserDetails().setCurrentCountOrders(countOrdersInWork);
@@ -300,6 +342,8 @@ public class ControllerTTS implements ErrorController {
 
         model.addAttribute("ordersInWork", ordersInWork);
         model.addAttribute("countOrdersInWork", countOrdersInWork);
+        model.addAttribute("ordersExecuting", ordersExecuting);
+        model.addAttribute("countOrdersExecuting", countOrdersExecuting);
         model.addAttribute("user", user);
 
         return "user-panel";
