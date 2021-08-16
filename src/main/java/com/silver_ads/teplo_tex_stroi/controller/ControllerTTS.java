@@ -69,12 +69,17 @@ public class ControllerTTS implements ErrorController {
         String userLogin = principal.getName();
         Order order = orderServices.getOrderById(orderId);
         User user = userServices.getUserByLoginName(userLogin);
-        if (user.getOrders().size() < user.getUserDetails().getMaxCountOrders()) {
+        if (user.getOrders().size() < user.getUserDetails().getMaxCountOrders() &&
+        Math.abs(user.getUserDetails().getBalance()) < Math.abs(user.getUserDetails().getMaxCrediteBalance())) {
             orderServices.addOrderToUser(order, user);
             user.getUserDetails().setCurrentCountOrders(user.getOrders().size());
             userServices.save(user);
         } else {
-            throw new Exception("You have many orders or many canceled orders");
+            throw new Exception("<br>Либо у Вас есть задолжность по оплате за заявки! Которая привышает <b>"
+                    + user.getUserDetails().getMaxCrediteBalance() + "</b>, <br> погасите пожалуйста полностью задолжность и сможете продолжить брать заявки в работу" +
+                    "<br> <br>Либо у Вас в работе заявок больше чем установленный лимит <b>" + user.getUserDetails().getMaxCountOrders() + "грн"+
+                    "</b><br> <br> Либо у Вас количество отменненных заявок больше лимита <b>" + user.getUserDetails().getMaxCountCanceledOrders() +
+                    "</b><br> <br> Если это ошибочно, обратитесь к администратору на вайбер, или по тел. <b>097 870 63 63</b>");
         }
         return "redirect:/order";
     }

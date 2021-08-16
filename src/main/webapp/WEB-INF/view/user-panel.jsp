@@ -16,6 +16,11 @@
                 <p align="right">Привет  ${user.userDetails.name} ${user.userDetails.lastName} Ваш город: ${user.userDetails.city} </p>
                 <p align="right">Логин: ${user.loginName}</p>
                 <p align="right"><b>Баланс: ${user.userDetails.balance} грн</b></p>
+                <c:if test="${user.userDetails.balance*-1 > user.userDetails.maxCrediteBalance}">
+                    <font color="red">
+                        <p align="right">У Вас задолжность по оплате за </p>
+                        <p align="right">выполненные заявки, оплатите пожалуйста!</p></font>
+                </c:if>
                 <p align="right">Макс. заявок: <b style="color: #ff3300">${user.userDetails.maxCountOrders} </b>
                     Заявок в работе: <b style="color: #ff0000">${user.userDetails.currentCountOrders}</b></p>
                 <p align="right">Макс. отмен заявок : <b style="color: #ff0000">${user.userDetails.maxCountCanceledOrders} </b>

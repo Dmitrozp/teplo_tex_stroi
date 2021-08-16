@@ -38,6 +38,8 @@ public class UserDetails {
     private Integer currentComplededCountOrders;
     @Column(name = "balance")
     private Integer balance;
+    @Column(name = "max_credit_balance")
+    private Integer maxCrediteBalance;
 
     @Override
     public boolean equals(Object o) {
