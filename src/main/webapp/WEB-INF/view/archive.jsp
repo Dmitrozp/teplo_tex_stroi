@@ -17,15 +17,43 @@
             padding-top: 20px;
             color: white;
         }
-        p.head {
-            font-size: 20px;
+        p{}
+        .p-head {
+            font-size: 30px;
             padding-right: 30px;
+            margin: 0px;
             color: white;
         }
-        p.warning {
+        .p-text {
             font-size: 20px;
             padding-right: 30px;
+            margin: 0px;
+            color: white;
+        }
+        .p-warning {
+            font-size: 20px;
+            padding-right: 30px;
+            margin: 0px;
             color: red;
+        }
+        table{}
+        .table-order{
+            width: 100%;
+            font-size: medium;
+            font-family: Arial;
+            text-align: center;
+        }
+        .table-head{
+            width: 100%;
+            border-width: 0;
+        }
+        .table-order-tr-head{
+            background:Khaki;
+            align-content: center;
+        }
+        .table-order-tr-row{
+            background:LightCyan;
+            align-content: center;
         }
         h2 {
             padding-left: 30px;
@@ -41,9 +69,10 @@
             padding-left: 70px;
             padding-right: 30px;
         }
-        input.order {
-            background: -moz-linear-gradient(#D0ECF4, #e0ffff, #D0ECF4);
-            background: -webkit-gradient(linear, 0 0, 0  100%, from(#D0ECF4), to(#D0ECF4), color-stop(0.5, #e0ffff));
+        input{}
+        .order {
+            background: -moz-linear-gradient(#f3f4d0, #e2e921, #f4f3d0);
+            background: -webkit-gradient(linear, 0 0, 0  100%, from(#f4f3d0), to(#f2f4d0), color-stop(0.5, #eae719));
             filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00BBD6', endColorstr='#EBFFFF');
             padding: 3px 7px;
             color: #333;
@@ -54,7 +83,7 @@
             font-size: large;
             width:150px
         }
-        input.navigation {
+        .navigation {
             background: -moz-linear-gradient(#f3f4d0, #e2e921, #f4f3d0);
             background: -webkit-gradient(linear, 0 0, 0  100%, from(#f4f3d0), to(#f2f4d0), color-stop(0.5, #eae719));
             filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00BBD6', endColorstr='#EBFFFF');
@@ -68,45 +97,53 @@
             padding-right: 10px;
             padding-left: 10px;
         }
+        form{}
+        .head{
+            margin: 0px;
+        }
     </style>
-
 </head>
 <body>
-<table border="0" width="100%" background="${pageContext.request.contextPath}/img/backgroundtable.jpg">
+<table class="table-head" background="${pageContext.request.contextPath}/img/backgroundtable.jpg">
     <tr>
-        <td valign="top">
+        <td valign="top" width="50%">
             <table>
                 <td width="60"><img class="logo" width="60%" src="${pageContext.request.contextPath}/img/logo2.png"/></td>
                 <td><a href="https://teplo-tex-stroi.com/"><strong class="logo">ТеплоТехСтрой</strong></a></td>
             </table>
 
-            <h2 class="head" align="right"><strong>Последнии новости и обновления.</strong></h2>
+            <h2 class="head" align="center"><strong>Последнии новости и обновления.</strong></h2>
         </td>
         <td>
-            <table border="0" width="100%">
-                <td><h2 class="head" align="right">Ваш профиль:  ${user.userDetails.name} ${user.userDetails.lastName}</h2></td>
-                <td><form  align="right" method="LINK" action="/logout">
-                    <input class="navigation" type="submit" value="Выйти">
-                </form></td>
+            <table border="0" width="100%" align="center">
+                <td align="right"><p class="p-head" >Ваш профиль:  ${user.userDetails.name} ${user.userDetails.lastName}</p></td>
+                <td align="right" >
+                    <form  class="head" align="right" method="LINK" action="/logout">
+                        <input class="navigation" type="submit" value="Выйти">
+                    </form></td>
             </table>
-            <p class="head" align="right">
+            <br>
+            <br>
+            <p class="p-text" align="right">
                 Логин:<strong>  ${user.loginName}</strong>
                 Ваш город:<strong> ${user.userDetails.city} </strong></p>
-            <p class="head" align="right">
+            <p class="p-text" align="right">
                 На сегодня баланс:<strong>  ${user.userDetails.balance} </strong>грн</p>
             <c:if test="${user.userDetails.balance*-1 > user.userDetails.maxCrediteBalance}">
                 <font color="red">
-                    <p class="warning" align="right">У Вас задолжность по оплате за </p>
-                    <p class="warning" align="right">выполненные заявки, оплатите пожалуйста!</p>
+                    <p class="p-warning" align="right">У Вас задолжность по оплате за </p>
+                    <p class="p-warning" align="right">выполненные заявки, оплатите пожалуйста!</p>
                 </font>
             </c:if>
 
-            <p class="head" align="right">
+            <p class="p-text" align="right">
                 Заявок в работе: <strong> ${user.userDetails.currentCountOrders}</strong></p>
-            <p class="head" align="right">
+            <p class="p-text" align="right">
+                Заявки в исполнении: <strong> ${countOrdersExecuting}</strong></p>
+            <p class="p-text" align="right">
                 Отмененных заявок : <strong> ${user.userDetails.currentCanceledCountOrders}</strong></p>
-            <p class="head" align="right">Выполненные заявки: <strong> ${user.userDetails.currentComplededCountOrders} </strong></p>
-
+            <p class="p-text" align="right">Выполненные заявки: <strong> ${user.userDetails.currentComplededCountOrders} </strong></p>
+            <br>
             <table border="0" align="right">
                 <td>
                     <security:authorize access="hasAnyRole('ADMIN', 'MANAGER', 'SUPER_MANAGER')">
@@ -123,9 +160,11 @@
                     </security:authorize>
                 </td>
                 <td>
-                <form method="LINK" align="right" action="/profile">
-                    <input class="navigation" type="submit" value="Мои завки">
-                </form>
+                    <security:authorize access="hasAnyRole('USER', 'ADMIN','SUPER_USER')">
+                        <form method="LINK" align="right" action="/profile">
+                        <input class="navigation" type="submit" value="Мои завки">
+                        </form>
+                    </security:authorize>
                 </td>
             </table>
             <br>
@@ -134,16 +173,12 @@
         </td>
     </tr>
 </table>
-
 <br>
-<h1 align="center">Заявки в архиве</h1>
-<br>
+<h1 align="center">Архив заявок.</h1>
 <br>
 <h2 align="left">Выполненые заявки:</h2>
-<font size="4" face="Courier New" >
-
-    <table width="100%">
-        <tr col span="2" style="background:Khaki" align="center">
+    <table class="table-order">
+        <tr class="table-order-tr-head">
             <th>Дата заявки</th>
             <th>Имя заказчика</th>
             <th>Адрес</th>
@@ -151,7 +186,8 @@
             <th>Город</th>
             <th>Телефон</th>
             <th>Площадь</th>
-            <th width="100">Отчеты</th>
+            <th>Комментарии</th>
+            <th>Навигация</th>
         </tr>
 
         <c:forEach var="ordersCompletedInArchive" items="${ordersCompletedInArchive}" >
@@ -163,7 +199,7 @@
                 <c:param name="orderId" value="${ordersCompletedInArchive.id}"/>
             </c:url>
 
-            <tr col style="background-color:LightCyan" align="center">
+            <tr class="table-order-tr-row">
                 <td>
                     <fmt:parseDate value="${ordersCompletedInArchive.date}" pattern="yyyy-MM-dd'T'HH:mm:ss"
                                    var="parsedDateTime" type="both" />
@@ -201,7 +237,7 @@
                         </c:forEach>
                     </table>
                 </td>
-                <td col style="background-color:white" align="center">
+                <td>
                     <security:authorize access="hasAnyRole('USER', 'ADMIN')">
                         <table>
                             <tr></tr>
@@ -224,17 +260,12 @@
             </tr>
         </c:forEach>
     </table>
-    <font size="4" face="Courier New" >
         <c:if test="${countCompletedInArchive < 1}">
-        <p>У Вас еще нет выполненых заявок!<p>
+        <p class="p-warning">У Вас еще нет выполненых заявок!</p>
         </c:if>
-    </font>
-</font>
 <h2 align="left">Отмененные заявки:</h2>
-<font size="4" face="Courier New" >
-
-    <table width="100%">
-        <tr col span="2" style="background:Khaki" align="center">
+<table class="table-order">
+        <tr class="table-order-tr-head">
             <th>Дата заявки</th>
             <th>Имя заказчика</th>
             <th>Адрес</th>
@@ -242,7 +273,9 @@
             <th>Город</th>
             <th>Телефон</th>
             <th>Площадь</th>
-            <th width="100">Отчеты</th>
+            <th>Комментарии</th>
+            <th>Навигация</th>
+
         </tr>
 
         <c:forEach var="ordersCanceledInArchive" items="${ordersCanceledInArchive}" >
@@ -254,7 +287,7 @@
                 <c:param name="orderId" value="${ordersCanceledInArchive.id}"/>
             </c:url>
 
-            <tr col style="background-color:LightCyan" align="center">
+            <tr class="table-order-tr-row">
                 <td>
                     <fmt:parseDate value="${ordersCanceledInArchive.date}" pattern="yyyy-MM-dd'T'HH:mm:ss"
                                    var="parsedDateTime" type="both" />
@@ -292,7 +325,7 @@
                         </c:forEach>
                     </table>
                 </td>
-                <td col style="background-color:white" align="center">
+                <td>
                     <security:authorize access="hasAnyRole('USER', 'ADMIN')">
                         <table>
                             <tr></tr>
@@ -315,12 +348,8 @@
             </tr>
         </c:forEach>
     </table>
-    <font size="4" face="Courier New" >
-        <c:if test="${countCompletedInArchive < 1}">
-        <p>У Вас еще нет выполненых заявок!<p>
+        <c:if test="${countCanceledInArchive < 1}">
+        <p class="p-warning">У Вас еще нет выполненых заявок!<p>
         </c:if>
-    </font>
-</font>
-
 </body>
 </html>
