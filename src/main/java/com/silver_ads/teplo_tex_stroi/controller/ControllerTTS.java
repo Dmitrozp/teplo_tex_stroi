@@ -159,7 +159,8 @@ public class ControllerTTS implements ErrorController {
         Order order = orderServices.getOrderById(report.getOrder().getId());
         Report reportResult = new Report();
         reportResult.setOrder(order);
-        reportResult.setDescription(report.getDescription());
+        reportResult.setDescription(user.getUserDetails().getName() + " "+ user.getUserDetails().getLastName()
+                + ": " + report.getDescription());
         report.setUserCreator(user);
         reportServices.saveReport(reportResult);
 
@@ -355,11 +356,20 @@ public class ControllerTTS implements ErrorController {
     public String archive(Model model, Principal principal) {
         User user = userServices.getUserByLoginName(principal.getName());
         List<Order> orders = user.getOrders();
-        List<Order> ordersInArchive = orders.stream().filter(order -> !order.getStatusOrder().equals(OrderStatus.IN_WORK.name())).collect(Collectors.toList());
-        int countOrdersInArchive = ordersInArchive.size();
+//        List<Order> ordersInArchive = orders.stream().filter(order -> !order.getStatusOrder().equals(OrderStatus.IN_WORK.name())).collect(Collectors.toList());
+//        int countOrdersInArchive = ordersInArchive.size();
+        List<Order> ordersCanceledInArchive = orders.stream().filter(order -> order.getStatusOrder().equals(OrderStatus.IN_ARCHIVE.name())).collect(Collectors.toList());
+        int countCanceledInArchive = ordersCanceledInArchive.size();
+        List<Order> ordersCompletedInArchive = orders.stream().filter(order -> order.getStatusOrder().equals(OrderStatus.COMPLETED.name())).collect(Collectors.toList());
+        int countCompletedInArchive = ordersCompletedInArchive.size();
 
-        model.addAttribute("ordersInArchive", ordersInArchive);
-        model.addAttribute("countOrdersInArchive", countOrdersInArchive);
+//        model.addAttribute("ordersInArchive", ordersInArchive);
+//        model.addAttribute("countOrdersInArchive", countOrdersInArchive);
+        model.addAttribute("ordersCanceledInArchive", ordersCanceledInArchive);
+        model.addAttribute("countCanceledInArchive", countCanceledInArchive);
+        model.addAttribute("ordersCompletedInArchive", ordersCompletedInArchive);
+        model.addAttribute("countCompletedInArchive", countCompletedInArchive);
+
         model.addAttribute("user", user);
 
         return "archive";
