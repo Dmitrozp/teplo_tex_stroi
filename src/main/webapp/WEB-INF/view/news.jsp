@@ -2,13 +2,11 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
 <head>
-    <title>Панель управления заявками для менеджера</title>
+    <title>Новости и обновления ТеплоТехСтрой</title>
     <style>
         <%@include file="css/my.css" %>
-        <%@include file="css/form.css" %>
     </style>
 </head>
 <body>
@@ -17,29 +15,8 @@
         <td valign="top" width="50%">
             <table>
                 <td class="logo"><img class="logo"/></td>
-                <td><a class="a-logo" href="https://teplo-tex-stroi.com/"><strong class="logo">ТеплоТехСтрой</strong></a></td>
+                <td><a href="https://teplo-tex-stroi.com/"><strong class="logo">ТеплоТехСтрой</strong></a></td>
             </table>
-            <p></p>
-            <h2 class="head" align="center"><strong>новости и обновления</strong></h2>
-            <div class="news-head">
-                <c:forEach var="news" items="${news}">
-                    <table>
-                        <td>
-                            <p class="p-news">
-                                <fmt:parseDate value="${news.date}" pattern="yyyy-MM-dd'T'HH:mm:ss"
-                                               var="parsedDateTime" type="both" />
-                                <fmt:formatDate value="${parsedDateTime}" pattern="dd.MM.yyyy" />
-                            </p>
-                        </td>
-                        <td>
-                            <a class="a-news" href="/newsItem?newsId=${news.id}">${news.title}</a>
-
-                        </td>
-                    </table>
-                </c:forEach>
-                <br>
-                <a class="a-news" href="/news"><p align="center">Все новости</p></a>
-            </div>
         </td>
         <td>
             <table border="0" width="100%" align="center">
@@ -57,8 +34,10 @@
             <p class="p-text" align="right">
                 На сегодня баланс:<strong>  ${user.userDetails.balance} </strong>грн</p>
             <c:if test="${user.userDetails.balance*-1 > user.userDetails.maxCrediteBalance}">
-                <p class="p-warning" align="right">У Вас задолжность по оплате за </p>
-                <p class="p-warning" align="right">выполненные заявки, оплатите пожалуйста!</p>
+                <font color="red">
+                    <p class="p-warning" align="right">У Вас задолжность по оплате за </p>
+                    <p class="p-warning" align="right">выполненные заявки, оплатите пожалуйста!</p>
+                </font>
             </c:if>
 
             <p class="p-text" align="right">
@@ -98,29 +77,23 @@
         </td>
     </tr>
 </table>
-<div align="center">
-    <form:form action="saveCanceledOrder" class="ui-form" modelAttribute="report">
-        <h2 align="center">${user.userDetails.name}, вы отменяете заявку!</h2>
-        <table>
-            <tr>
-                <td align="left">Заявка : ${order.id}</td>
-                <td align="right">Дата : ${order.date}</td>
-            </tr>
-            <tr>
-                <td align="left">Заказчик : ${order.orderDetails.customerName}</td>
-                <td align="right">Адрес : ${order.orderDetails.address}</td>
-            </tr>
-            <tr>
-                <td align="left">Телефон : ${order.orderDetails.phoneNumber}</td>
-                <td align="right">Город : ${order.orderDetails.city}</td>
-            </tr>
-        </table>
-        <h2 align="center">Причина отмены заявки:</h2>
-            <form:hidden path="order.id"/>
-            <form:textarea path="description" cols="50" rows="5" />
-            <p>* поле не может быть пустыми</p>
-        <p><input type="submit" value="Сохранить" /></p>
-    </form:form>
-</div>
+<br>
+<h1 align="center">Новости и обновления</h1>
+<table class="table-news">
+    <tr></tr>
+    <c:forEach var="news" items="${news}">
+<tr>
+            <h2 align="center" > ${news.title}</h2>
+    <br>
+    <div class="news-format">
+                <p align="left" ><fmt:parseDate value="${news.date}" pattern="yyyy-MM-dd'T'HH:mm:ss"
+                                               var="parsedDateTime" type="both" /> Дата:
+                <fmt:formatDate value="${parsedDateTime}" pattern="dd.MM.yyyy" /></p>
+    <h4 >${news.text}</h4>
+    </div>
+
+</tr>
+    </c:forEach>
+</table>
 </body>
 </html>

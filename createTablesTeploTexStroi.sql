@@ -29,6 +29,14 @@ CREATE TABLE silverads.orders (
                                   FOREIGN KEY (id_details) REFERENCES order_details (id)
 
 );
+CREATE TABLE silverads.news (
+                                id BIGINT NOT NULL AUTO_INCREMENT,
+                                date_insert timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                title varchar(255) DEFAULT NULL,
+                                pre_view varchar(255) DEFAULT NULL,
+                                text_news LONGTEXT DEFAULT NULL,
+                                PRIMARY KEY (id)
+);
 CREATE TABLE silverads.user_details (
                                         id BIGINT NOT NULL AUTO_INCREMENT,
                                         name varchar(25),

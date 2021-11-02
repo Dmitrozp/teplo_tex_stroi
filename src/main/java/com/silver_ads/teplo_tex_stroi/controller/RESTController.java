@@ -1,6 +1,5 @@
 package com.silver_ads.teplo_tex_stroi.controller;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.silver_ads.teplo_tex_stroi.entity.Order;
 import com.silver_ads.teplo_tex_stroi.entity.OrderDetails;
 import com.silver_ads.teplo_tex_stroi.entity.Report;
@@ -8,7 +7,7 @@ import com.silver_ads.teplo_tex_stroi.enums.order.OrderStatus;
 import com.silver_ads.teplo_tex_stroi.exception_handling.NoSuchOrderDetailsException;
 import com.silver_ads.teplo_tex_stroi.service.OrderDetailsServices;
 import com.silver_ads.teplo_tex_stroi.service.OrderServicesImpl;
-import org.aspectj.weaver.ast.Or;
+import com.silver_ads.teplo_tex_stroi.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,14 +22,14 @@ public class RESTController {
     @Autowired
     OrderDetailsServices orderDetailsServices;
 
-    @GetMapping("/order")
-    public List<Order> getAllOrder() {
-        List<Order> orders = orderServices.getOrdersWithHidePhoneAndStatusOrder(OrderStatus.NEW_ORDER_VERIFIED.name());
-        if (orders == null) {
-            throw new NoSuchOrderDetailsException("Not found any orders");
-        }
-        return orders;
-    }
+//    @GetMapping("/order")
+//    public List<Order> getAllOrder() {
+//        List<Order> orders = orderServices.getOrdersWithHidePhoneAndStatusOrder(OrderStatus.NEW_ORDER_VERIFIED.name());
+//        if (orders == null) {
+//            throw new NoSuchOrderDetailsException("Not found any orders");
+//        }
+//        return orders;
+//    }
 
     @PostMapping("/order")
     public Order createOrder(@RequestBody OrderDetails orderDetailsExternal) {
@@ -43,7 +42,7 @@ public class RESTController {
         List<Order> orders = orderServices.findOrdersWhereWithEqualsPhoneNumber(orderDetailsExternal.getPhoneNumber());
         if (!orders.isEmpty()){
             Report report = new Report();
-            report.setDate(LocalDateTime.now().plusSeconds(3));
+            report.setDate(Util.createTimeWithNotNullSeconds(LocalDateTime.now()));
             report.setDescription("<b><p style=\"color:#ff2200\">ПОВТОРНАЯ ЗАЯВКА!!!</b></p>" + "" +
                     "\nИмя клиента  " + orderDetailsExternal.getCustomerName() +
                     "\nГород  " + orderDetailsExternal.getCity() +
@@ -52,7 +51,7 @@ public class RESTController {
                     "\nКоличество комнат  " + orderDetailsExternal.getCountRooms() +
                     "\nПримечание  " + orderDetailsExternal.getNotes());
             orders.get(0).addReport(report);
-            orders.get(0).setDate(LocalDateTime.now().plusSeconds(3));
+            orders.get(0).setDate(Util.createTimeWithNotNullSeconds(LocalDateTime.now()));
             if (orders.get(0).getUserExecutor() != null){
             orders.get(0).setStatusOrder(OrderStatus.IN_WORK.name());
             } else {

@@ -1,9 +1,11 @@
 package com.silver_ads.teplo_tex_stroi.controller;
 
+import com.silver_ads.teplo_tex_stroi.entity.News;
 import com.silver_ads.teplo_tex_stroi.entity.Order;
 import com.silver_ads.teplo_tex_stroi.entity.Report;
 import com.silver_ads.teplo_tex_stroi.entity.User;
 import com.silver_ads.teplo_tex_stroi.enums.order.OrderStatus;
+import com.silver_ads.teplo_tex_stroi.repository.NewsRepository;
 import com.silver_ads.teplo_tex_stroi.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -17,6 +19,7 @@ import java.io.File;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -28,6 +31,8 @@ public class ControllerTTS implements ErrorController {
     UserServicesImpl userServices;
     @Autowired
     ReportServicesImpl reportServices;
+    @Autowired
+    NewsServicesImpl newsServices;
 
     @RequestMapping("/")
     public String showAllOrdersWithHidePhoneNumber(Model model) throws Exception {
@@ -45,6 +50,8 @@ public class ControllerTTS implements ErrorController {
         {
             ordersNotVerified = orderServices.getOrdersWithHidePhoneAndStatusOrder(OrderStatus.NEW_ORDER_NOT_VERIFIED.name());
         }
+        List<News> news = newsServices.findFirstLastNews();
+        model.addAttribute("news", news);
         model.addAttribute("orders", orders);
         model.addAttribute("ordersNotVerified", ordersNotVerified);
         model.addAttribute("user", user);
@@ -69,17 +76,24 @@ public class ControllerTTS implements ErrorController {
         String userLogin = principal.getName();
         Order order = orderServices.getOrderById(orderId);
         User user = userServices.getUserByLoginName(userLogin);
-        if (user.getOrders().size() < user.getUserDetails().getMaxCountOrders() &&
-        Math.abs(user.getUserDetails().getBalance()) < Math.abs(user.getUserDetails().getMaxCrediteBalance())) {
-            orderServices.addOrderToUser(order, user);
-            user.getUserDetails().setCurrentCountOrders(user.getOrders().size());
-            userServices.save(user);
-        } else {
-            throw new Exception("<br>Либо у Вас есть задолжность по оплате за заявки! Которая привышает <b>"
-                    + user.getUserDetails().getMaxCrediteBalance() + "грн" + "</b>, <br> погасите пожалуйста полностью задолжность и сможете продолжить брать заявки в работу" +
-                    "<br> <br>Либо у Вас в работе заявок больше чем установленный лимит <b>" + user.getUserDetails().getMaxCountOrders() +
-                    "</b><br> <br> Либо у Вас количество отменненных заявок больше лимита <b>" + user.getUserDetails().getMaxCountCanceledOrders() +
+        if (order.getStatusOrder() != OrderStatus.NEW_ORDER_VERIFIED.name() || order.getStatusOrder() != OrderStatus.NEW_ORDER_NOT_VERIFIED.name()){
+            throw new Exception("Данная заявка не может быть взята в работу" +
                     "</b><br> <br> Если это ошибочно, обратитесь к администратору на вайбер, или по тел. <b>097 870 63 63</b>");
+        } else {
+            if (Math.abs(user.getUserDetails().getBalance()) > Math.abs(user.getUserDetails().getMaxCrediteBalance())){
+                throw new Exception("<br>У Вас есть задолжность по оплате за заявки! Которая привышает <b>"
+                        + user.getUserDetails().getMaxCrediteBalance() + "грн" + "</b>, <br> погасите пожалуйста полностью задолжность и сможете продолжить брать заявки в работу" +
+                        "</b><br> <br> Если это ошибочно, обратитесь к администратору на вайбер, или по тел. <b>097 870 63 63</b>");
+            } else {
+                if (user.getOrders().size() > user.getUserDetails().getMaxCountOrders()) {
+                    throw new Exception("<br> <br>У Вас в работе заявок больше чем установленный лимит <b>" + user.getUserDetails().getMaxCountOrders() +
+                            "</b><br> <br> Если это ошибочно, обратитесь к администратору на вайбер, или по тел. <b>097 870 63 63</b>");
+                } else {
+                    orderServices.addOrderToUser(order, user);
+                    user.getUserDetails().setCurrentCountOrders(user.getOrders().size());
+                    userServices.save(user);
+                }
+            }
         }
         return "redirect:/order";
     }
@@ -97,6 +111,8 @@ public class ControllerTTS implements ErrorController {
         List<Order> ordersInWork = orderServices.getOrdersForManagerByStatus(OrderStatus.IN_WORK.name());
         List<Order> ordersExecuting = orderServices.getOrdersForManagerByStatus(OrderStatus.EXECUTING.name());
 
+        List<News> news = newsServices.findFirstLastNews();
+        model.addAttribute("news", news);
 
         int countNewOrders = newOrders.size();
         model.addAttribute("newOrders", newOrders);
@@ -122,6 +138,33 @@ public class ControllerTTS implements ErrorController {
         return "manager-panel";
     }
 
+    @RequestMapping("/news")
+    public String showNews(Model model, Principal principal) {
+        User user = userServices.getUserByLoginName(principal.getName());
+
+        List<News> news = newsServices.showAllNews();
+        model.addAttribute("news", news);
+        model.addAttribute("user", user);
+
+        return "news";
+    }
+
+    @RequestMapping("/newsItem")
+    public String showNews(@RequestParam("newsId") Long newsId, Model model, Principal principal) throws Exception {
+        User user = userServices.getUserByLoginName(principal.getName());
+
+        Optional<News> newsOne = newsServices.findNewsById(newsId);
+        if(newsOne.isEmpty()){
+            throw new Exception("Такой новости не найдено");
+        }
+        List<News> news = new ArrayList<>();
+        news.add(newsOne.get());
+        model.addAttribute("news", news);
+        model.addAttribute("user", user);
+
+        return "news";
+    }
+
     @RequestMapping("/manager/sendOrderInWork")
     public String sendOrderInWork(@RequestParam("orderId") int orderId, Principal principal, Model model) {
         Order order = orderServices.getOrderById(orderId);
@@ -131,21 +174,26 @@ public class ControllerTTS implements ErrorController {
         return "redirect:/manager";
     }
 
-
-
     @RequestMapping(value = "/.well-known/pki-validation/669424F355907B4335118701E4DE92E0.txt", method = RequestMethod.GET)
     @ResponseBody
     public FileSystemResource getFile() {
         return new FileSystemResource(new File("src/main/resources/669424F355907B4335118701E4DE92E0.txt"));
     }
 
-
     @RequestMapping("/order/createReport")
-    public String createReport(@RequestParam("orderId") Long orderId, Principal principal, Model model) {
+    public String createReport(@RequestParam("orderId") Long orderId, Principal principal, Model model) throws Exception {
+        User user = userServices.getUserByLoginName(principal.getName());
+        if(!orderServices.isMyOrder(user,orderId)){
+            throw new Exception("Это не Ваша заявка, введите правильный ID заявки");
+        }
         Report report = new Report();
         report.setOrder(new Order());
         report.getOrder().setId(orderId);
         model.addAttribute("report", report);
+        model.addAttribute("user", user);
+
+        List<News> news = newsServices.findFirstLastNews();
+        model.addAttribute("news", news);
 
         return "create-report";
     }
@@ -178,10 +226,12 @@ public class ControllerTTS implements ErrorController {
     }
 
     @RequestMapping("/order/createCanceledOrder")
-    public String createCanceledOrder(@RequestParam("orderId") int orderId, Principal principal, Model model) throws Exception {
+    public String createCanceledOrder(@RequestParam("orderId") Long orderId, Principal principal, Model model) throws Exception {
         Order order = orderServices.getOrderById(orderId);
         User user = userServices.getUserByLoginName(principal.getName());
-
+        if(!orderServices.isMyOrder(user,orderId)){
+            throw new Exception("Это не Ваша заявка, введите правильный ID заявки");
+        }
         if (user.getUserDetails().getCurrentCanceledCountOrders() < user.getUserDetails().getMaxCountCanceledOrders()) {
             Report report = new Report();
             report.setUserCreator(user);
@@ -190,6 +240,10 @@ public class ControllerTTS implements ErrorController {
             model.addAttribute("order", order);
             model.addAttribute("user", user);
             model.addAttribute("report", report);
+            model.addAttribute("user", user);
+
+            List<News> news = newsServices.findFirstLastNews();
+            model.addAttribute("news", news);
         } else {
             throw new Exception("У Вас привышен лимин отменненных заявок! Max = " + user.getUserDetails().getMaxCountCanceledOrders()
                     + "в данный момент " + user.getUserDetails().getCurrentCanceledCountOrders() + "/n"
@@ -210,7 +264,6 @@ public class ControllerTTS implements ErrorController {
 
         return "redirect:/profile";
     }
-
 
     @RequestMapping("/order/edit")
     public String editOrder(@RequestParam("orderId") int orderId, Principal principal, Model model){
@@ -268,12 +321,17 @@ public class ControllerTTS implements ErrorController {
     }
 
     @RequestMapping("/order/createExecutingOrder")
-    public String createExecutingOrder(@RequestParam("orderId") int orderId, Principal principal, Model model) {
-        Order order = orderServices.getOrderById(orderId);
+    public String createExecutingOrder(@RequestParam("orderId") Long orderId, Principal principal, Model model) throws Exception {
         User user = userServices.getUserByLoginName(principal.getName());
-
+        if(!orderServices.isMyOrder(user,orderId)){
+            throw new Exception("Это не Ваша заявка, введите правильный ID заявки");
+        }
+        Order order = orderServices.getOrderById(orderId);
         model.addAttribute("order", order);
         model.addAttribute("user", user);
+
+        List<News> news = newsServices.findFirstLastNews();
+        model.addAttribute("news", news);
 
         return "executing-order";
     }
@@ -296,7 +354,8 @@ public class ControllerTTS implements ErrorController {
         order.setStatusOrder(OrderStatus.EXECUTING.name());
 
         User user = userServices.getUserByLoginName(principal.getName());
-        user.getUserDetails().setBalance(user.getUserDetails().getBalance() - Math.abs(orderWithChanges.getSummOfContract())/10);
+        user.getUserDetails().setBalance(user.getUserDetails().getBalance()
+                - Math.round(Math.abs(orderWithChanges.getSummOfContract())/user.getUserDetails().getRoyalty()));
 
         userServices.save(user);
         orderServices.save(order);
@@ -305,21 +364,23 @@ public class ControllerTTS implements ErrorController {
     }
 
     @RequestMapping("/order/createCompletedOrder")
-    public String createCompletedOrder(@RequestParam("orderId") int orderId, Principal principal, Model model) {
-        Order order = orderServices.getOrderById(orderId);
+    public String createCompletedOrder(@RequestParam("orderId") Long orderId, Principal principal, Model model) throws Exception {
         User user = userServices.getUserByLoginName(principal.getName());
-
+        if(!orderServices.isMyOrder(user,orderId)){
+            throw new Exception("Это не Ваша заявка, введите правильный ID заявки");
+        }
+        Order order = orderServices.getOrderById(orderId);
         model.addAttribute("order", order);
         model.addAttribute("user", user);
+
+        List<News> news = newsServices.findFirstLastNews();
+        model.addAttribute("news", news);
 
         return "completed-order";
     }
 
     @RequestMapping("/order/saveCompletedOrder")
     public String saveCompletedOrder(@ModelAttribute("order") Order orderWithChanges, Principal principal) throws Exception {
-        if (orderWithChanges.getOrderDetails().getSumOfPaymentCustomer() == null || orderWithChanges.getOrderDetails().getSumOfPaymentCustomer() < 0){
-            throw new Exception("Поле \"сумма оплаты клиентом\" не может быть пустым или отрицательным! Пожалуйста введите данные. ");
-        }
         User user = userServices.getUserByLoginName(principal.getName());
 
         orderServices.saveCompletedOrder(orderWithChanges, user);
@@ -340,6 +401,8 @@ public class ControllerTTS implements ErrorController {
             user.getUserDetails().setCurrentCountOrders(countOrdersInWork);
             userServices.save(user);
         }
+        List<News> news = newsServices.findFirstLastNews();
+        model.addAttribute("news", news);
 
         model.addAttribute("ordersInWork", ordersInWork);
         model.addAttribute("countOrdersInWork", countOrdersInWork);
@@ -350,21 +413,17 @@ public class ControllerTTS implements ErrorController {
         return "user-panel";
     }
 
-
-
     @RequestMapping("/order/archive")
     public String archive(Model model, Principal principal) {
         User user = userServices.getUserByLoginName(principal.getName());
         List<Order> orders = user.getOrders();
-//        List<Order> ordersInArchive = orders.stream().filter(order -> !order.getStatusOrder().equals(OrderStatus.IN_WORK.name())).collect(Collectors.toList());
-//        int countOrdersInArchive = ordersInArchive.size();
         List<Order> ordersCanceledInArchive = orders.stream().filter(order -> order.getStatusOrder().equals(OrderStatus.IN_ARCHIVE.name())).collect(Collectors.toList());
         int countCanceledInArchive = ordersCanceledInArchive.size();
         List<Order> ordersCompletedInArchive = orders.stream().filter(order -> order.getStatusOrder().equals(OrderStatus.COMPLETED.name())).collect(Collectors.toList());
         int countCompletedInArchive = ordersCompletedInArchive.size();
 
-//        model.addAttribute("ordersInArchive", ordersInArchive);
-//        model.addAttribute("countOrdersInArchive", countOrdersInArchive);
+        List<News> news = newsServices.findFirstLastNews();
+        model.addAttribute("news", news);
         model.addAttribute("ordersCanceledInArchive", ordersCanceledInArchive);
         model.addAttribute("countCanceledInArchive", countCanceledInArchive);
         model.addAttribute("ordersCompletedInArchive", ordersCompletedInArchive);

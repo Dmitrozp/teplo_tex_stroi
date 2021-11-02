@@ -1,125 +1,51 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
     <title>Мой кабинет с заявками</title>
-    <style type="text/css">
-        img.logo {
-            padding-left: 20px;
-            padding-top: 5px;
-
-        }
-        strong.logo{
-            font-size: xx-large;
-            padding-left: 0px;
-            padding-top: 20px;
-            color: white;
-        }
-        p{}
-        .p-head {
-            font-size: 30px;
-            padding-right: 30px;
-            margin: 0px;
-            color: white;
-        }
-        .p-text {
-            font-size: 20px;
-            padding-right: 30px;
-            margin: 0px;
-            color: white;
-        }
-        .p-warning {
-            font-size: 20px;
-            padding-right: 30px;
-            margin: 0px;
-            color: red;
-        }
-        table{}
-        .table-order{
-            width: 100%;
-            font-size: medium;
-            font-family: Arial;
-            text-align: center;
-        }
-        .table-head{
-            width: 100%;
-            border-width: 0;
-        }
-        .table-order-tr-head{
-            background:Khaki;
-            align-content: center;
-        }
-        .table-order-tr-row{
-            background:LightCyan;
-            align-content: center;
-        }
-        h2 {
-            padding-left: 30px;
-            padding-right: 30px;
-        }
-        h2.head {
-            padding-left: 30px;
-            padding-right: 30px;
-            color: white;
-        }
-        ul {
-            font-size: 16px;
-            padding-left: 70px;
-            padding-right: 30px;
-        }
-        input{}
-        .order {
-            background: -moz-linear-gradient(#f3f4d0, #e2e921, #f4f3d0);
-            background: -webkit-gradient(linear, 0 0, 0  100%, from(#f4f3d0), to(#f2f4d0), color-stop(0.5, #eae719));
-            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00BBD6', endColorstr='#EBFFFF');
-            padding: 3px 7px;
-            color: #333;
-            -moz-border-radius: 5px;
-            -webkit-border-radius: 5px;
-            border-radius: 5px;
-            border: 1px solid #666;
-            font-size: large;
-            width:150px
-        }
-        .navigation {
-            background: -moz-linear-gradient(#f3f4d0, #e2e921, #f4f3d0);
-            background: -webkit-gradient(linear, 0 0, 0  100%, from(#f4f3d0), to(#f2f4d0), color-stop(0.5, #eae719));
-            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00BBD6', endColorstr='#EBFFFF');
-            padding: 3px 7px;
-            color: #333;
-            -moz-border-radius: 5px;
-            -webkit-border-radius: 5px;
-            border-radius: 5px;
-            border: 1px solid #666;
-            font-size: large;
-            padding-right: 10px;
-            padding-left: 10px;
-        }
-        form{}
-        .head{
-            margin: 0px;
-        }
+    <style>
+        <%@include file="css/my.css" %>
     </style>
 </head>
 <body>
-<table class="table-head" background="${pageContext.request.contextPath}/img/backgroundtable.jpg">
+
+<table class="table-head">
     <tr>
         <td valign="top" width="50%">
             <table>
-                <td width="60"><img class="logo" width="60%" src="${pageContext.request.contextPath}/img/logo2.png"/></td>
-                <td><a href="https://teplo-tex-stroi.com/"><strong class="logo">ТеплоТехСтрой</strong></a></td>
+                <td class="logo"><img class="logo"/></td>
+                <td><a class="a-logo" href="https://teplo-tex-stroi.com/"><strong class="logo">ТеплоТехСтрой</strong></a></td>
             </table>
+            <p></p>
+            <h2 class="head" align="center"><strong>новости и обновления</strong></h2>
+            <div class="news-head">
+                <c:forEach var="news" items="${news}">
+                    <table>
+                        <td>
+                            <p class="p-news">
+                                <fmt:parseDate value="${news.date}" pattern="yyyy-MM-dd'T'HH:mm:ss"
+                                               var="parsedDateTime" type="both" />
+                                <fmt:formatDate value="${parsedDateTime}" pattern="dd.MM.yyyy" />
+                            </p>
+                        </td>
+                        <td>
+                            <a class="a-news" href="/newsItem?newsId=${news.id}">${news.title}</a>
 
-            <h2 class="head" align="center"><strong>Последнии новости и обновления.</strong></h2>
+                        </td>
+                    </table>
+                </c:forEach>
+                <br>
+                <a class="a-news" href="/news"><p align="center">Все новости</p></a>
+            </div>
         </td>
         <td>
             <table border="0" width="100%" align="center">
                 <td align="right"><p class="p-head" >Ваш профиль:  ${user.userDetails.name} ${user.userDetails.lastName}</p></td>
                 <td align="right" >
                     <form  class="head" align="right" method="LINK" action="/logout">
-                    <input class="navigation" type="submit" value="Выйти">
+                    <input class="navigation" type="submit" value="выйти">
                     </form></td>
             </table>
             <br>
@@ -130,10 +56,8 @@
             <p class="p-text" align="right">
                 На сегодня баланс:<strong>  ${user.userDetails.balance} </strong>грн</p>
             <c:if test="${user.userDetails.balance*-1 > user.userDetails.maxCrediteBalance}">
-                <font color="red">
                     <p class="p-warning" align="right">У Вас задолжность по оплате за </p>
                     <p class="p-warning" align="right">выполненные заявки, оплатите пожалуйста!</p>
-                </font>
             </c:if>
 
             <p class="p-text" align="right">
@@ -148,21 +72,26 @@
                 <td>
                     <security:authorize access="hasAnyRole('ADMIN', 'MANAGER', 'SUPER_MANAGER','SUPER_USER')">
                         <form  align="right" method="LINK" action="/manager">
-                            <input class="navigation" type="submit" value="Кабинет для менеджера">
+                            <input class="navigation" type="submit" value="для менеджера">
                         </form>
                     </security:authorize>
                 </td>
                 <td>
                     <security:authorize access="hasAnyRole('USER', 'ADMIN','SUPER_USER')">
                         <form method="LINK" align="right" action="/order">
-                        <input class="navigation" type="submit" value="Взять заявку" >
+                        <input class="navigation" type="submit" value="главная" >
                         </form>
                     </security:authorize>
                 </td>
                 <td>
+                        <form align="right" method="LINK" action="/profile">
+                            <input class="navigation-action" type="submit" value="кабинет с заявками" >
+                        </form>
+                </td>
+                <td>
                     <security:authorize access="hasAnyRole('USER', 'ADMIN','SUPER_USER')">
                         <form method="LINK" align="right" action="/order/archive">
-                        <input class="navigation" type="submit" value="Архив заявок" >
+                        <input class="navigation" type="submit" value="архив заявок" >
                         </form>
                     </security:authorize>
                 </td>
@@ -243,26 +172,26 @@
                         </c:forEach>
                     </table>
                 </td>
-                <td>
+                <td align="center">
                     <table>
                         <tr height="10">
                             <td></td>
                         </tr>
                         <tr height="15" align="center">
                             <td>
-                                <input class="order"  type="button" align="100%" value="Комментарий"
+                                <input class="order"  type="button" align="100%" value="комментарий"
                                        onclick = "window.location.href = '${createReport}'"/>
                             </td>
                         </tr>
                         <tr height="15" align="center">
                             <td>
-                                <input class="order" type="button" align="100%" value="В работу"
+                                <input class="order" type="button" align="100%" value="в исполнение"
                                        onclick = "window.location.href = '${executingOrder}'"/>
                             </td>
                         </tr>
                         <tr height="15" align="center">
                             <td>
-                                <input class="order" type="button" align="100%" value="Отменить"
+                                <input class="order" type="button" align="100%" value="отменить"
                                        onclick = "window.location.href = '${canceledOrder}'"/>
                             </td>
                         </tr>
@@ -346,20 +275,20 @@
                         </c:forEach>
                     </table>
                 </td>
-                <td >
+                <td align="center">
                     <table>
                         <tr height="10">
                             <td></td>
                         </tr>
                         <tr height="15" align="center">
                             <td>
-                                <input class="order" type="button" value="Комментарий"
+                                <input class="order" type="button" value="комментарий"
                                 onclick = "window.location.href = '${createReport}'"/>
                             </td>
                         </tr>
                         <tr height="15" align="center">
                             <td>
-                                <input class="order" type="button" value="Выполнить"
+                                <input class="order" type="button" value="закрыть"
                                        onclick = "window.location.href = '${completedOrder}'"/>
                             </td>
                         </tr>

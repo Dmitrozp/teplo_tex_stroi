@@ -37,4 +37,6 @@ public interface OrderServices {
 
     void saveOrderInArchive(Long orderId, String loginName);
 
+    boolean isMyOrder(User user, Long orderId);
+
 }

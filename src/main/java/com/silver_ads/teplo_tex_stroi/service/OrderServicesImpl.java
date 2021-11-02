@@ -64,7 +64,6 @@ public class OrderServicesImpl implements OrderServices {
     public void saveCompletedOrder(Order orderWithChanges, User user){
         final Integer NEW_COMPLETED_ORDER =1;
         Order order = getOrderById(orderWithChanges.getId());
-        order.getOrderDetails().setSumOfPaymentCustomer(orderWithChanges.getOrderDetails().getSumOfPaymentCustomer());
         order.setStatusPayment(PaymentStatus.PROCESSING.name());
         order.setStatusOrder(OrderStatus.COMPLETED.name());
         Report report = new Report();
@@ -73,7 +72,7 @@ public class OrderServicesImpl implements OrderServices {
         report.setDescription("<b><p style=\"color:#41f01e\">ВЫПОЛНЕНА!!!</b></p> исполнителем логин " + user.getLoginName()
                 + " Имя: " + user.getUserDetails().getName() + " Заявка ID: " + order.getId()
                 + " Площадь утепления: " + order.getOrderDetails().getSquareAreaFromReport()
-                + " Сумма оплаты клиентом: " + order.getOrderDetails().getSumOfPaymentCustomer());
+                + " Сумма оплаты по договору: " + order.getSummOfContract());
         report.setUserCreator(user);
         order.addReport(report);
         user.getUserDetails().setCurrentComplededCountOrders(user.getUserDetails().getCurrentComplededCountOrders()
@@ -115,10 +114,14 @@ public class OrderServicesImpl implements OrderServices {
         report.setUserCreator(user);
 
         order.setStatusOrder(OrderStatus.IN_ARCHIVE.name());
-//        order.setUserExecutor(null);
         order.addReport(report);
 
         orderRepository.save(order);
+    }
+
+    @Override
+    public boolean isMyOrder(User user, Long orderId) {
+        return orderRepository.findOrderByIdAndUserExecutor(orderId, user).isPresent();
     }
 
     @Override

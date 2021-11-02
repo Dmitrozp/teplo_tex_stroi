@@ -21,78 +21,17 @@
             padding-right: 30px;
         }
     </style>
-    <style type="text/css">
-        img.logo {
-            padding-left: 20px;
-            padding-top: 5px;
-
-        }
-        strong.logo{
-            font-size: xx-large;
-            padding-left: 0px;
-            padding-top: 20px;
-            color: white;
-        }
-        p.head {
-            font-size: 20px;
-            padding-right: 30px;
-            color: white;
-        }
-        p.warning {
-            font-size: 20px;
-            padding-right: 30px;
-            color: red;
-        }
-        h2 {
-            padding-left: 30px;
-            padding-right: 30px;
-        }
-        h2.head {
-            padding-left: 30px;
-            padding-right: 30px;
-            color: white;
-        }
-        ul {
-            font-size: 16px;
-            padding-left: 70px;
-            padding-right: 30px;
-        }
-        input.order {
-            background: -moz-linear-gradient(#D0ECF4, #e0ffff, #D0ECF4);
-            background: -webkit-gradient(linear, 0 0, 0  100%, from(#D0ECF4), to(#D0ECF4), color-stop(0.5, #e0ffff));
-            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00BBD6', endColorstr='#EBFFFF');
-            padding: 3px 7px;
-            color: #333;
-            -moz-border-radius: 5px;
-            -webkit-border-radius: 5px;
-            border-radius: 5px;
-            border: 1px solid #666;
-            font-size: large;
-            width:150px
-        }
-        input.navigation {
-            background: -moz-linear-gradient(#f3f4d0, #e2e921, #f4f3d0);
-            background: -webkit-gradient(linear, 0 0, 0  100%, from(#f4f3d0), to(#f2f4d0), color-stop(0.5, #eae719));
-            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00BBD6', endColorstr='#EBFFFF');
-            padding: 3px 7px;
-            color: #333;
-            -moz-border-radius: 5px;
-            -webkit-border-radius: 5px;
-            border-radius: 5px;
-            border: 1px solid #666;
-            font-size: large;
-            padding-right: 10px;
-            padding-left: 10px;
-        }
+    <style>
+        <%@include file="css/my.css" %>
     </style>
 </head>
 <body>
-<table border="0" height="100" width="100%" background="${pageContext.request.contextPath}/img/backgroundtable.jpg">
+<table class="table-head">
     <tr>
         <td valign="center">
             <table>
-                <td width="60"><img class="logo" width="60%" src="${pageContext.request.contextPath}/img/logo2.png"/></td>
-                <td><a href="https://teplo-tex-stroi.com/"><strong class="logo">ТеплоТехСтрой</strong></a></td>
+                <<td class="logo"><img class="logo"/></td>
+                <td><a class="a-logo" href="https://teplo-tex-stroi.com/"><strong class="logo">ТеплоТехСтрой</strong></a></td>
             </table>
 
         </td>
@@ -101,12 +40,12 @@
                 <td><h2 class="head" align="right">Ваш профиль:  ${user.userDetails.name} ${user.userDetails.lastName}</h2></td>
                 <td align="right" >
                     <form  align="right" method="LINK" action="/order">
-                    <input class="navigation" type="submit" value="Войти">
+                    <input class="navigation" type="submit" value="войти">
                     </form>
                 </td>
                 <td align="right" >
                     <form  align="right" method="LINK" action="/logout">
-                    <input class="navigation" type="submit" value="Выйти">
+                    <input class="navigation" type="submit" value="выйти">
                     </form>
                 </td>
             </table>
@@ -123,7 +62,7 @@
     <p><br />Оказываем информационные и маркетинговые услуги по привлечению клиентов на утепление фасадом квартир и частных домом.</p>
     <p>Есть база реальных заявок на утепление фасада квартир и частных домов пенопластом и минватой, отделка и ремонт фасада.</p>
     <p>Сотрудничаем со строительными бригадами и частными мастерами.</p>
-    <p>Что бы получить доступ к списку заявок нужно <a href="/order">ВОЙТИ.</a></p>
+    <p>Что бы получить доступ к списку заявок нужно <a href="/order">ВОЙТИ</a>, либо используйте для теста логин:test пароль:test</p>
     <p>Для получения логина и пароля, обращаться по тел. 066 201 93 93 или в viber</p></p>
 
     <h2><br /><strong>Преимущества работы с нами:</strong></h2>
